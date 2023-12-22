@@ -1,0 +1,31 @@
+﻿@model SpeedTOHAPI.Models.LoginModel
+<div id="body">
+    <section class="featured">
+        <div class="content-wrapper">
+            <div><img src="https://speedup.vn/wp-content/themes/onda/images/logo.svg" width="170" rel="Speed Tech Logo" /></div>
+        </div>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+        <h3>Login API Document (@System.Environment.MachineName)</h3>
+        <ol class="round">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, null, new { @class = "alert alert-danger" })
+                <div class="form-group has-feedback" style="width:50%">
+                    @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @placeholder = "Username", @autofocus = "autofocus" })
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback" style="width:50%">
+                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @placeholder = "Password", @type = "password" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                </div>
+            }
+        </ol>
+    </section>
+</div>
