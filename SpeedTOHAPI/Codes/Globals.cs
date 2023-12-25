@@ -222,7 +222,20 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 204, Function = "Any", Message = "The input parameter is incomplete", Description = "Tham số đầu vào không đầy đủ (Kiểm tra các tham số truyền lên)" });
             rs.Add(new MessageModel { Status = 205, Function = "Any", Message = "An exception error occurred", Description = "Xảy ra lỗi ngoại lệ (Kiểm tra Exception trả về)" });
             rs.Add(new MessageModel { Status = 206, Function = "Any", Message = "PartnerKey not found", Description = "Không tìm thấy mã đối tác (Kiểm tra PartnerKey ở Header)" });
+            rs.Add(new MessageModel { Status = 0, Function = "Any", Message = "Exception erorr", Description = "Lỗi ngoại lệ" });
 
+            //Patient
+            rs.Add(new MessageModel { Status = 301, Function = "Patient", Message = "Data list patient can not be empty", Description = "Danh sách bệnh nhân không được để trống" });
+            rs.Add(new MessageModel { Status = 302, Function = "Patient", Message = "VisitCode can not be empty", Description = "VisitCode không được để trống" });
+            rs.Add(new MessageModel { Status = 303, Function = "Patient", Message = "HN can not be empty", Description = "HN không được để trống" });
+            rs.Add(new MessageModel { Status = 304, Function = "Patient", Message = "VisitCode & HN already exist", Description = "VisitCode & HN đã tồn tại" });
+            rs.Add(new MessageModel { Status = 305, Function = "Patient", Message = "BedCode can not be empty", Description = "BedCode không được để trống" });
+            rs.Add(new MessageModel { Status = 306, Function = "Patient", Message = "Ward can not be empty", Description = "Phường không được để trống" });
+            rs.Add(new MessageModel { Status = 307, Function = "Patient", Message = "Patient Full Name can not be empty", Description = "Họ và tên không được để trống" });
+            rs.Add(new MessageModel { Status = 308, Function = "Patient", Message = "DoB can not be empty", Description = "Ngày sinh không được để trống" });
+            rs.Add(new MessageModel { Status = 309, Function = "Patient", Message = "Nationality can not be empty", Description = "Quốc tịch không được để trống" });
+            rs.Add(new MessageModel { Status = 310, Function = "Patient", Message = "Primary Doctor can not be empty", Description = "Bác sĩ chính không được để trống" });
+            rs.Add(new MessageModel { Status = 311, Function = "Patient", Message = "Fasting From can not be empty", Description = "Ngày bắt đầu ăn kiêng không được để trống" });
             return rs;
         }
     }

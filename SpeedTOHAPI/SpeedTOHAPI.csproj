@@ -163,12 +163,19 @@
     <Compile Include="Codes\SessionHelper.cs" />
     <Compile Include="Codes\UserSession.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PatientDemographicController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DietaryPropertieModel.cs" />
+    <Compile Include="Models\DietModel.cs" />
+    <Compile Include="Models\ErorrModel.cs" />
+    <Compile Include="Models\FoodAllergieModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MenuTypeModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Models\PatientModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +329,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\bootstrap.min.js.map" />

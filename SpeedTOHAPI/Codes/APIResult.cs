@@ -11,5 +11,6 @@ namespace SpeedTOHAPI.Codes
         public string Message { set; get; }
         public string Exception { set; get; }
         public object Data { set; get; }
+        public object Erorr { set; get; }
     }
 }
