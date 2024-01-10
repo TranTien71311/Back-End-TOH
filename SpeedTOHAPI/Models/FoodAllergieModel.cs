@@ -9,7 +9,7 @@ namespace SpeedTOHAPI.Models
     {
         public int FoodAllergieID {  get; set; }
         public int PatientID {  get; set; }
-        public int DietCode { get; set; }
+        public string FoodCode { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public bool IsActive { get; set; }

@@ -213,7 +213,7 @@ namespace SpeedTOHAPI.Codes
         public static List<MessageModel> GetStatusCode()
         {
             List<MessageModel> rs = new List<MessageModel>();
-
+            int maxLength = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["MaxLengthAPI"]);
             //Any
             rs.Add(new MessageModel { Status = 200, Function = "Any", Message = "OK", Description = "Xử lí thành công" });
             rs.Add(new MessageModel { Status = 201, Function = "Any", Message = "There is no access to this feature", Description = "Không có quyền truy cập vào tính năng này (Gửi yêu cầu quyền)" });
@@ -222,6 +222,8 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 204, Function = "Any", Message = "The input parameter is incomplete", Description = "Tham số đầu vào không đầy đủ (Kiểm tra các tham số truyền lên)" });
             rs.Add(new MessageModel { Status = 205, Function = "Any", Message = "An exception error occurred", Description = "Xảy ra lỗi ngoại lệ (Kiểm tra Exception trả về)" });
             rs.Add(new MessageModel { Status = 206, Function = "Any", Message = "PartnerKey not found", Description = "Không tìm thấy mã đối tác (Kiểm tra PartnerKey ở Header)" });
+            rs.Add(new MessageModel { Status = 207, Function = "Any", Message = "PartnerKey does not exist", Description = "Mã đối tác không tồn tại (Kiểm tra PartnerKey ở Header)" });
+            rs.Add(new MessageModel { Status = 208, Function = "Any", Message = "The maximum number of elements is " + maxLength + " items", Description = "Số lượng phần tử tối đa là "+ maxLength +" phần tử" });
             rs.Add(new MessageModel { Status = 0, Function = "Any", Message = "Exception erorr", Description = "Lỗi ngoại lệ" });
 
             //Patient
@@ -236,6 +238,22 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 309, Function = "Patient", Message = "Nationality can not be empty", Description = "Quốc tịch không được để trống" });
             rs.Add(new MessageModel { Status = 310, Function = "Patient", Message = "Primary Doctor can not be empty", Description = "Bác sĩ chính không được để trống" });
             rs.Add(new MessageModel { Status = 311, Function = "Patient", Message = "Fasting From can not be empty", Description = "Ngày bắt đầu ăn kiêng không được để trống" });
+            rs.Add(new MessageModel { Status = 312, Function = "Patient", Message = "VisitCode & HN does not exist", Description = "VisitCode & HN không tồn tại" });
+
+            //DietaryPropertie
+            rs.Add(new MessageModel { Status = 501, Function = "DietaryPropertie", Message = "Data list Dietary Properties can not be empty", Description = "Danh sách đặc tính dinh dưỡng không được để trống" });
+            rs.Add(new MessageModel { Status = 502, Function = "DietaryPropertie", Message = "VisitCode can not be empty", Description = "VisitCode không được để trống" });
+            rs.Add(new MessageModel { Status = 503, Function = "DietaryPropertie", Message = "HN can not be empty", Description = "HN không được để trống" });
+            rs.Add(new MessageModel { Status = 504, Function = "DietaryPropertie", Message = "VisitCode & HN does not exist", Description = "VisitCode & HN không tồn tại" });
+            rs.Add(new MessageModel { Status = 505, Function = "DietaryPropertie", Message = "ValidFrom can not be empty", Description = "Thời gian bắt đầu hiệu lực không được để trống" });
+            rs.Add(new MessageModel { Status = 506, Function = "DietaryPropertie", Message = "ValidTo can not be empty", Description = "Thời gian hết hiệu lực không được để trống" });
+            rs.Add(new MessageModel { Status = 507, Function = "DietaryPropertie", Message = "DietCode can not be empty", Description = "Mã chế độ ăn không được để trống" });
+            rs.Add(new MessageModel { Status = 508, Function = "DietaryPropertie", Message = "DietCode does not exist", Description = "Mã chế độ ăn không tồn tại" });
+            rs.Add(new MessageModel { Status = 509, Function = "DietaryPropertie", Message = "FoodCode does not exist", Description = "Mã thực phẩm không tồn tại" });
+            rs.Add(new MessageModel { Status = 510, Function = "DietaryPropertie", Message = "VisitCode & HN already exist", Description = "VisitCode & HN đã tồn tại" });
+            rs.Add(new MessageModel { Status = 511, Function = "DietaryPropertie", Message = "KitchenCode does not exist", Description = "Kitchen Code không tồn tại" });
+            rs.Add(new MessageModel { Status = 512, Function = "DietaryPropertie", Message = "PantryCode does not exist", Description = "Pantry Code không tồn tại" });
+            rs.Add(new MessageModel { Status = 513, Function = "DietaryPropertie", Message = "SnackCode does not exist", Description = "Snack Code không tồn tại" });
             return rs;
         }
     }

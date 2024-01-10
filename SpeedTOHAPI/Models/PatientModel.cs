@@ -20,7 +20,7 @@ namespace SpeedTOHAPI.Models
         public DateTime? FastingTo { get; set;}
         public int? LengthOfStay { get; set; }
         public string PreviousBed { get; set; }
-        public DateTime? MovedToBed {  get; set; }
+        public string MovedToBed {  get; set; }
         public DateTime? DoNotOrderFrom { get; set; }
         public DateTime? DoNotOrderTo { get; set; } 
         public bool? IsActive { get; set; }
