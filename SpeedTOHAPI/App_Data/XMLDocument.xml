@@ -1,0 +1,889 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SpeedPOSAPI</name>
+    </assembly>
+    <members>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.ApiDescriptionExtensions.GetFriendlyId(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Generates an URI-friendly ID for the <see cref="T:System.Web.Http.Description.ApiDescription"/>. E.g. "Get-Values-id_name" instead of "GetValues/{id}?name={name}"
+            </summary>
+            <param name="description">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The ID as a string.</returns>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.HelpPageConfig">
+            <summary>
+            Use this class to customize the Help Page.
+            For example you can set a custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> to supply the documentation
+            or you can provide the samples for the requests/responses.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.Controllers.HelpController">
+            <summary>
+            The controller that will handle requests for the help page.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetDocumentationProvider(System.Web.Http.HttpConfiguration,System.Web.Http.Description.IDocumentationProvider)">
+            <summary>
+            Sets the documentation provider for help page.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="documentationProvider">The documentation provider.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleObjects(System.Web.Http.HttpConfiguration,System.Collections.Generic.IDictionary{System.Type,System.Object})">
+            <summary>
+            Sets the objects that will be used by the formatters to produce sample requests/responses.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleObjects">The sample objects.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type and action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleRequest(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample request directly for the specified media type and action with parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample request.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String)">
+            <summary>
+            Sets the sample request directly for the specified media type of the action.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleResponse(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.String,System.String,System.String[])">
+            <summary>
+            Sets the sample response directly for the specified media type of the action with specific parameters.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample response.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetSampleForType(System.Web.Http.HttpConfiguration,System.Object,System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Sets the sample directly for all actions with the specified type and media type.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sample">The sample.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The parameter type or return type of an action.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action. 
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualRequestType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> passed to the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action. 
+            The help page will use this information to produce more accurate request samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String)">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action. 
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetActualResponseType(System.Web.Http.HttpConfiguration,System.Type,System.String,System.String,System.String[])">
+            <summary>
+            Specifies the actual type of <see cref="T:System.Net.Http.ObjectContent`1"/> returned as part of the <see cref="T:System.Net.Http.HttpRequestMessage"/> in an action. 
+            The help page will use this information to produce more accurate response samples.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="type">The type.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration)">
+            <summary>
+            Gets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <returns>The help page sample generator.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.SetHelpPageSampleGenerator(System.Web.Http.HttpConfiguration,SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator)">
+            <summary>
+            Sets the help page sample generator.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="sampleGenerator">The help page sample generator.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageConfigurationExtensions.GetHelpPageApiModel(System.Web.Http.HttpConfiguration,System.String)">
+            <summary>
+            Gets the model that represents an API displayed on the help page. The model is initialized on the first call and cached for subsequent calls.
+            </summary>
+            <param name="config">The <see cref="T:System.Web.Http.HttpConfiguration"/>.</param>
+            <param name="apiDescriptionId">The <see cref="T:System.Web.Http.Description.ApiDescription"/> ID.</param>
+            <returns>
+            An <see cref="T:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel"/>
+            </returns>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel">
+            <summary>
+            The model that represents an API displayed on the help page.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel"/> class.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription">
+            <summary>
+            Gets or sets the <see cref="P:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.ApiDescription"/> that describes the API.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.SampleRequests">
+            <summary>
+            Gets the sample requests associated with the API.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.SampleResponses">
+            <summary>
+            Gets the sample responses associated with the API.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.Models.HelpPageApiModel.ErrorMessages">
+            <summary>
+            Gets the error messages associated with this model.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator">
+            <summary>
+            This class will generate the samples for the help page.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator"/> class.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.GetSampleRequests(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the request body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.GetSampleResponses(System.Web.Http.Description.ApiDescription)">
+            <summary>
+            Gets the response body samples for a given <see cref="T:System.Web.Http.Description.ApiDescription"/>.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.GetSample(System.Web.Http.Description.ApiDescription,SpeedPOSAPI.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Gets the request or response body samples.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The samples keyed by media type.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.GetActionSample(System.String,System.String,System.Collections.Generic.IEnumerable{System.String},System.Type,System.Net.Http.Formatting.MediaTypeFormatter,System.Net.Http.Headers.MediaTypeHeaderValue,SpeedPOSAPI.Areas.HelpPage.SampleDirection)">
+            <summary>
+            Search for samples that are provided directly through <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples"/>.
+            </summary>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="type">The CLR type.</param>
+            <param name="formatter">The formatter.</param>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or for a response.</param>
+            <returns>The sample that matches the parameters.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.GetSampleObject(System.Type)">
+            <summary>
+            Gets the sample object that will be serialized by the formatters. 
+            First, it will look at the <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects"/>. If no sample object is found, it will try to create one using <see cref="T:SpeedPOSAPI.Areas.HelpPage.ObjectGenerator"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The sample object.</returns>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.ResolveType(System.Web.Http.Description.ApiDescription,System.String,System.String,System.Collections.Generic.IEnumerable{System.String},SpeedPOSAPI.Areas.HelpPage.SampleDirection,System.Collections.ObjectModel.Collection{System.Net.Http.Formatting.MediaTypeFormatter}@)">
+            <summary>
+            Resolves the type of the action parameter or return value when <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/> is used.
+            </summary>
+            <param name="api">The <see cref="T:System.Web.Http.Description.ApiDescription"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+            <param name="sampleDirection">The value indicating whether the sample is for a request or a response.</param>
+            <param name="formatters">The formatters.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.WriteSampleObjectUsingFormatter(System.Net.Http.Formatting.MediaTypeFormatter,System.Object,System.Type,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Writes the sample object using formatter.
+            </summary>
+            <param name="formatter">The formatter.</param>
+            <param name="value">The value.</param>
+            <param name="type">The type.</param>
+            <param name="mediaType">Type of the media.</param>
+            <returns></returns>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.ActualHttpMessageTypes">
+            <summary>
+            Gets CLR types that are used as the content of <see cref="T:System.Net.Http.HttpRequestMessage"/> or <see cref="T:System.Net.Http.HttpResponseMessage"/>.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.ActionSamples">
+            <summary>
+            Gets the objects that are used directly as samples for certain actions.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleGenerator.SampleObjects">
+            <summary>
+            Gets the objects that are serialized as samples by the supported formatters.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey">
+            <summary>
+            This is used to identify the place where the sample should be applied.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,System.Type)">
+            <summary>
+            Creates a new <see cref="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey"/> based on media type and CLR type.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="type">The CLR type.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.#ctor(SpeedPOSAPI.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey"/> based on <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="sampleDirection">The <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.#ctor(System.Net.Http.Headers.MediaTypeHeaderValue,SpeedPOSAPI.Areas.HelpPage.SampleDirection,System.String,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates a new <see cref="T:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey"/> based on media type, <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>, controller name, action name and parameter names.
+            </summary>
+            <param name="mediaType">The media type.</param>
+            <param name="sampleDirection">The <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.</param>
+            <param name="controllerName">Name of the controller.</param>
+            <param name="actionName">Name of the action.</param>
+            <param name="parameterNames">The parameter names.</param>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.ControllerName">
+            <summary>
+            Gets the name of the controller.
+            </summary>
+            <value>
+            The name of the controller.
+            </value>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.ActionName">
+            <summary>
+            Gets the name of the action.
+            </summary>
+            <value>
+            The name of the action.
+            </value>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.MediaType">
+            <summary>
+            Gets the media type.
+            </summary>
+            <value>
+            The media type.
+            </value>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.ParameterNames">
+            <summary>
+            Gets the parameter names.
+            </summary>
+        </member>
+        <member name="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection">
+            <summary>
+            Gets the <see cref="P:SpeedPOSAPI.Areas.HelpPage.HelpPageSampleKey.SampleDirection"/>.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.ImageSample">
+            <summary>
+            This represents an image sample on the help page. There's a display template named ImageSample associated with this class.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.ImageSample.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpeedPOSAPI.Areas.HelpPage.ImageSample"/> class.
+            </summary>
+            <param name="src">The URL of an image.</param>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.InvalidSample">
+            <summary>
+            This represents an invalid sample on the help page. There's a display template named InvalidSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.ObjectGenerator">
+            <summary>
+            This class will create an object of a given type and populate it with sample data.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.ObjectGenerator.GenerateObject(System.Type)">
+            <summary>
+            Generates an object for a given type. The type needs to be public, have a public default constructor and settable public properties/fields. Currently it supports the following types:
+            Simple types: <see cref="T:System.Int32"/>, <see cref="T:System.String"/>, <see cref="T:System.Enum"/>, <see cref="T:System.DateTime"/>, <see cref="T:System.Uri"/>, etc.
+            Complex types: POCO types.
+            Nullables: <see cref="T:System.Nullable`1"/>.
+            Arrays: arrays of simple types or complex types.
+            Key value pairs: <see cref="T:System.Collections.Generic.KeyValuePair`2"/>
+            Tuples: <see cref="T:System.Tuple`1"/>, <see cref="T:System.Tuple`2"/>, etc
+            Dictionaries: <see cref="T:System.Collections.Generic.IDictionary`2"/> or anything deriving from <see cref="T:System.Collections.Generic.IDictionary`2"/>.
+            Collections: <see cref="T:System.Collections.Generic.IList`1"/>, <see cref="T:System.Collections.Generic.IEnumerable`1"/>, <see cref="T:System.Collections.Generic.ICollection`1"/>, <see cref="T:System.Collections.IList"/>, <see cref="T:System.Collections.IEnumerable"/>, <see cref="T:System.Collections.ICollection"/> or anything deriving from <see cref="T:System.Collections.Generic.ICollection`1"/> or <see cref="T:System.Collections.IList"/>.
+            Queryables: <see cref="T:System.Linq.IQueryable"/>, <see cref="T:System.Linq.IQueryable`1"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>An object of the given type.</returns>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.SampleDirection">
+            <summary>
+            Indicates whether the sample is used for request or response
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.TextSample">
+            <summary>
+            This represents a preformatted text sample on the help page. There's a display template named TextSample associated with this class.
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.Areas.HelpPage.XmlDocumentationProvider">
+            <summary>
+            A custom <see cref="T:System.Web.Http.Description.IDocumentationProvider"/> that reads the API documentation from an XML documentation file.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Areas.HelpPage.XmlDocumentationProvider.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SpeedPOSAPI.Areas.HelpPage.XmlDocumentationProvider"/> class.
+            </summary>
+            <param name="documentPath">The physical path to XML document.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.eMAILController.GetEMAILContent(System.String,System.Int32)">
+            <summary>
+            GetEMAILContent: Lấy thông tin mẫu email
+            </summary>
+            <param name="Partner">Mã đối tác.</param>
+            <param name="StoreId">Mã cửa hàng.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.eMAILController.PostEMAIL(System.String,System.Int32,System.String)">
+            <summary>
+            PostEMAIL: Gửi email
+            </summary>
+            <param name="Partner">Mã đối tác.</param>
+            <param name="StoreId">Mã cửa hàng.</param>
+            <param name="value">Dữ liệu email dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.eSMSController.GetSMSSupplier(System.String)">
+            <summary>
+            GetSMSSupplier: Lấy thông tin đầu số nhà mạng.
+            </summary>
+            <param name="Partner">Mã đối tác.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.eSMSController.GetSMSContent(System.String,System.Int32)">
+            <summary>
+            GetSMSContent: Lấy thông tin mẫu tin nhắn.
+            </summary>
+            <param name="Partner">Mã đối tác.</param>
+            <param name="StoreId">Mã cửa hàng.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.eSMSController.PostSMS(System.String,System.Int32,System.String)">
+            <summary>
+            PostSMS: Gửi tin nhắn
+            </summary>
+            <param name="Partner">Mã đối tác.</param>
+            <param name="StoreId">Mã cửa hàng.</param>
+            <param name="value">Dữ liệu tin nhắn dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemAddrController.GetMemAddr">
+            <summary>
+            GetMemAddr: Lấy danh sách địa chỉ giao hàng của member
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemAddrController.GetMemAddrSplitPages(System.Int32,System.Int32)">
+            <summary>
+            GetMemAddrSplitPages: Lấy danh sách địa chỉ giao hàng của member phân trang
+            </summary>
+            <param name="PageSize">Số dòng trên 1 trang.</param>
+            <param name="PageNum">Trang số.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemAddrController.PostMemAddr(System.String)">
+            <summary>
+            PostMemAddr: Thêm một địa chỉ giao hàng mới
+            </summary>
+            <param name="value">Dữ liệu thành viên dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemAddrController.PutMemAddr(System.Int32,System.String)">
+            <summary>
+            PutMemAddr: Cập nhật một địa chỉ giao hàng
+            </summary>
+            <param name="MemAddrID">Mã địa chỉ.</param>
+            <param name="value">Dữ liệu địa chỉ thành viên dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.EmployeeController.GetEmployeeBySwipe(System.String)">
+            <summary>
+            GetEmployeeBySwipe: Lấy thông tin nhân viên theo mã thẻ
+            </summary>
+            <param name="Swipe">Mã thẻ nhân viên.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ForcedChoicesController.GetForcedChoices">
+            <summary>
+            GetForcedChoices: Lấy thông tin lựa chọn trong câu hỏi.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MsgMgrController.PostMsgMgr(System.String)">
+            <summary>
+            PostMsgMgr: Thêm thông báo
+            </summary>
+            <param name="value">Text thông báo.</param>  
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.OrdersController.PutOrderStatus(System.Int32,System.Int32)">
+            <summary>
+            PutOrderStatus: Cập nhật trạng thái order
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosDetailController.PostPosDetail(System.String)">
+            <summary>
+            PostPosDetail: Thêm danh sách sản phẩm cho giao dịch
+            </summary>
+            <param name="value">Dữ liệu danh sách sản phẩm dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosDetailController.GetPosDetailByTransact(System.Int32)">
+            <summary>
+            GetPosDetailByTransact: Lấy thông tin PosDetail theo Transact
+            </summary>
+            <param name="Transact">Số giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosHeaderController.PostPosHeader(System.String)">
+            <summary>
+            PostPosHeader: Thêm một giao dịch
+            </summary>
+            <param name="value">Dữ liệu giao dịch dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosHeaderController.GetPosHeader">
+            <summary>
+            GetPosHeader: Lấy thông tin PosHeader đang mở
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosHeaderController.GetPosHeaderByTransact(System.Int32)">
+            <summary>
+            GetPosHeaderByTransact: Lấy thông tin PosHeader theo Transact
+            </summary>
+            <param name="Transact">Số giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PosHeaderController.GetPosHeaderByRefId(System.String)">
+            <summary>
+            GetPosHeaderByRefId: Lấy thông tin PosHeader theo RefId
+            </summary>
+            <param name="RefId">Mã RefCode của giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.RevenueCenterController.GetRevenueCenter">
+            <summary>
+            GetRevenueCenter: Lấy danh sách Revenue Center
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.StationInfoController.GetStationInfo">
+            <summary>
+            GetStationInfo: Lấy danh sách Pos Station
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionPaymentController.GetTransactionPaymentByOpenDate(System.String,System.String)">
+            <summary>
+            GetTransactionPaymentByOpenDate: Lấy dữ liệu chi tiết thanh toán theo OpenDate.
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionPaymentController.GetTransactionPaymentByOpenDateMemCode(System.String,System.String,System.Int32)">
+            <summary>
+            GetTransactionPaymentByOpenDateMemCode: Lấy dữ liệu chi tiết thanh toán theo OpenDate MemCode
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+            <param name="MemCode">Mã khách hàng.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionPaymentController.GetTransactionPaymentByTransact(System.Int32)">
+            <summary>
+            GetTransactionPaymentByTransact: Lấy dữ liệu chi tiết thanh toán theo Transact.
+            </summary>
+            <param name="Transact">Số giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.HowtoMakeController.GetHowtoMake">
+            <summary>
+            GetHowtoMake: Lấy thông tin hình ảnh sản phẩm.
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.HowtoMakeController.GetHowtoMakeSplitPages(System.Int32,System.Int32)">
+            <summary>
+            GetHowtoMakeSplitPages: Lấy thông tin hình ảnh sản phẩm phân trang.
+            </summary>
+            <param name="PageSize">Số dòng trên 1 trang.</param>
+            <param name="PageNum">Trang số.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMember">
+            <summary>
+            GetMember: Lấy danh sách member
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMemberSplitPages(System.Int32,System.Int32)">
+            <summary>
+            GetMemberSplitPages: Lấy danh sách member phân trang
+            </summary>
+            <param name="PageSize">Số dòng trên 1 trang.</param>
+            <param name="PageNum">Trang số.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMemberByPhoneNumber(System.String)">
+            <summary>
+            GetMemberByPhoneNumber: Lấy danh sách member theo PhoneNumber
+            </summary>
+            <param name="PhoneNumber">Số điện thoại.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMemberByCardNum(System.String)">
+            <summary>
+            GetMemberByCardNum: Lấy danh sách member theo CardNum
+            </summary>
+            <param name="CardNum">Mã thẻ.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMemberByRef(System.String)">
+            <summary>
+            GetMemberByRef: Lấy danh sách member theo Ref
+            </summary>
+            <param name="Ref">Mã Ref.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.GetMemberByMemCode(System.Int32)">
+            <summary>
+            GetMemberByMemCode: Lấy danh sách member theo MemCode
+            </summary>
+            <param name="MemCode">Mã thành viên.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.PostMember(System.String)">
+            <summary>
+            PostMember: Thêm một thành viên mới
+            </summary>
+            <param name="value">Dữ liệu thành viên dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberController.PutMember(System.Int32,System.String)">
+            <summary>
+            PutMember: Cập nhật thành viên mới
+            </summary>
+            <param name="MemCode">Mã thành viên.</param>
+            <param name="value">Dữ liệu thành viên dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.MemberGroupsController.GetMemberGroups">
+            <summary>
+            MemberGroups: Lấy danh sách nhóm thành viên
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionDetailController.GetTransactionDetailByOpenDate(System.String,System.String)">
+            <summary>
+            GetTransactionDetailByOpenDate: Lấy dữ liệu chi tiết giao dịch theo OpenDate.
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionDetailController.GetTransactionDetailByOpenDateMemCode(System.String,System.String,System.Int32)">
+            <summary>
+            GetTransactionDetailByOpenDateMemCode: Lấy dữ liệu chi tiết giao dịch theo OpenDate MemCode.
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+            <param name="MemCode">Mã khách hàng.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionDetailController.GetTransactionDetailByTransact(System.Int32)">
+            <summary>
+            GetTransactionDetailByTransact: Lấy dữ liệu chi tiết giao dịch theo Transact.
+            </summary>
+            <param name="Transact">Số giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionHeaderController.GetTransactionHeaderByOpenDate(System.String,System.String)">
+            <summary>
+            GetTransactionHeaderByOpenDate: Lấy dữ liệu giao dịch theo OpenDate.
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionHeaderController.GetTransactionHeaderByOpenDateMemCode(System.String,System.String,System.Int32)">
+            <summary>
+            GetTransactionHeaderByOpenDateMemCode: Lấy dữ liệu giao dịch theo OpenDate MemCode.
+            </summary>
+            <param name="FromDate">Từ ngày.</param>
+            <param name="EndDate">Đến ngày.</param>
+            <param name="MemCode">Mã khách hàng.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TransactionHeaderController.GetTransactionHeaderByTransact(System.Int32)">
+            <summary>
+            GetTransactionHeaderByTransact: Lấy dữ liệu giao dịch theo Transact.
+            </summary>
+            <param name="Transact">Số giao dịch.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ProductComboController.GetProductCombo">
+            <summary>
+            GetProductCombo: Lấy danh sách sản phẩm combo
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ProductController.GetProduct">
+            <summary>
+            GetProduct: Lấy danh sách sản phẩm
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ProductController.GetProductSplitPages(System.Int32,System.Int32)">
+            <summary>
+            GetProductSplitPages: Lấy danh sách sản phẩm phân trang
+            </summary>
+            <param name="PageSize">Số dòng trên 1 trang.</param>
+            <param name="PageNum">Trang số.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.PromoController.GetPromo">
+            <summary>
+            GetPromo: Lấy danh sách giảm giá
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.QuestionsController.GetQuestions">
+            <summary>
+            GetQuestions: Lấy danh sách câu hỏi
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReportCatController.GetReportCat">
+            <summary>
+            GetReportCat: Lấy danh sách nhóm sản phẩm
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationsController.GetReservations(System.String,System.String)">
+            <summary>
+            GetReservations: Lấy danh sách đặt bàn
+            </summary>
+            <param name="FromDate">Thời gian bắt đầu.</param>
+            <param name="EndDate">Thời gian kết thúc.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationsController.GetReservationsByMemCode(System.String,System.String,System.Int32)">
+            <summary>
+            GetReservationsByMemCode: Lấy danh sách đặt bàn theo thành viên
+            </summary>
+            <param name="FromDate">Thời gian bắt đầu.</param>
+            <param name="EndDate">Thời gian kết thúc.</param>
+            <param name="MemCode">Mã thành viên.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationsController.GetReservationsByResNum(System.Int32)">
+            <summary>
+            GetReservationsByResNum: Lấy danh sách đặt bàn theo PagerNum, ResNum
+            </summary>
+            <param name="ResNum">Số ResNum/PagerNum.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationsController.PostReservations(System.String)">
+            <summary>
+            PostReservations: Thêm một đặt bàn
+            </summary>
+            <param name="value">Dữ liệu đặt bàn dưới dạng JSON.</param>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationsController.PutReservations(System.Int32,System.String)">
+            <summary>
+            PutReservations: Cập nhật một đặt bàn
+            </summary>
+            <param name="ResNum">Mã đặt bàn.</param>
+            <param name="value">Dữ liệu đặt bàn dưới dạng JSON.</param>        
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationTypeController.GetReservationType">
+            <summary>
+            GetReservationType: Lấy thông tin loại đặt bàn
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationTypeController.PostReservationType(System.String)">
+            <summary>
+            PostReservationType: Thêm một loại đặt bàn
+            </summary>
+            <param name="value">Dữ liệu loại đặt bàn dưới dạng JSON.</param>        
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.ReservationTypeController.PutReservationType(System.Int32,System.String)">
+            <summary>
+            PutReservationType: Cập nhật loại đặt bàn
+            </summary>
+            <param name="ResTypeNum">Mã loại đặt bàn.</param>
+            <param name="value">Dữ liệu loại đặt bàn dưới dạng JSON.</param>        
+        </member>
+        <member name="T:SpeedPOSAPI.KeyService">
+            <summary>
+            Summary description for KeyService
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.SaleTypesController.GetSaleTypes">
+            <summary>
+            GetSaleTypes: Lấy danh sách loại hình bán hàng
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.SectionsController.GetSections(System.String)">
+            <summary>
+            GetSections: Lấy danh sách khu vực
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.SummaryGroupController.GetSummaryGroup">
+            <summary>
+            GetSummaryGroup: Lấy danh sách nhóm chính sản phẩm
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.SysInfoController.GetSysInfo">
+            <summary>
+            GetSysInfo: Lấy thông tin cấu hình thuế
+            </summary>
+        </member>
+        <member name="M:SpeedPOSAPI.Controllers.TableSetupController.GetTableSetup">
+            <summary>
+            GetTableSetup: Lấy thông tin cấu hình bàn
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.SyncService">
+            <summary>
+            Summary description for SyncService
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.TaxService">
+            <summary>
+            Summary description for TaxService
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.wsClientServices">
+            <summary>
+            Summary description for wsClientServices
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.wsRSA">
+            <summary>
+            Summary description for wsRSA
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.wsSMSServices">
+            <summary>
+            Summary description for wsSMSServices
+            </summary>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SMS">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.#ctor">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendSMSBrandName(System.String,System.String,System.String,System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendSMSBrandNameAsync(System.String,System.String,System.String,System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendSMSBrandNameAsync(System.String,System.String,System.String,System.String,System.String,System.Object)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendUTF(System.String,System.String,System.String,System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendUTFAsync(System.String,System.String,System.String,System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendUTFAsync(System.String,System.String,System.String,System.String,System.String,System.Object)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendBatch(System.String,System.String,System.String[],System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendBatchAsync(System.String,System.String,System.String[],System.String,System.String)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.SendBatchAsync(System.String,System.String,System.String[],System.String,System.String,System.Object)">
+            <remarks/>
+        </member>
+        <member name="M:SpeedPOSAPI.CMCTELECOM.SMS.CancelAsync(System.Object)">
+            <remarks/>
+        </member>
+        <member name="E:SpeedPOSAPI.CMCTELECOM.SMS.SendSMSBrandNameCompleted">
+            <remarks/>
+        </member>
+        <member name="E:SpeedPOSAPI.CMCTELECOM.SMS.SendUTFCompleted">
+            <remarks/>
+        </member>
+        <member name="E:SpeedPOSAPI.CMCTELECOM.SMS.SendBatchCompleted">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.APIResponse">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.APIResponse.code">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.APIResponse.description">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.APIResponse.data">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SMSResponse">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.SMSResponse.phoneNumber">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.SMSResponse.status">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendSMSBrandNameCompletedEventHandler">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendSMSBrandNameCompletedEventArgs">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.SendSMSBrandNameCompletedEventArgs.Result">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendUTFCompletedEventHandler">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendUTFCompletedEventArgs">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.SendUTFCompletedEventArgs.Result">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendBatchCompletedEventHandler">
+            <remarks/>
+        </member>
+        <member name="T:SpeedPOSAPI.CMCTELECOM.SendBatchCompletedEventArgs">
+            <remarks/>
+        </member>
+        <member name="P:SpeedPOSAPI.CMCTELECOM.SendBatchCompletedEventArgs.Result">
+            <remarks/>
+        </member>
+    </members>
+</doc>

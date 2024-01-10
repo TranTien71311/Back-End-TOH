@@ -162,15 +162,15 @@
     <Compile Include="Codes\NakedBodyParameterBinding.cs" />
     <Compile Include="Codes\SessionHelper.cs" />
     <Compile Include="Codes\UserSession.cs" />
+    <Compile Include="Controllers\DietaryPropertiesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PatientDemographicController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\PatientDemographicsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DietaryPropertieModel.cs" />
     <Compile Include="Models\DietModel.cs" />
-    <Compile Include="Models\ErorrModel.cs" />
+    <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\FoodAllergieModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\MenuTypeModel.cs" />
