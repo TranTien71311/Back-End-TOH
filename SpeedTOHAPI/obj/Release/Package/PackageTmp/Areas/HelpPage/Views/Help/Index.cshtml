@@ -6,17 +6,27 @@
 @model Collection<ApiDescription>
 
 @{
-    ViewBag.Title = "Speed POS";
+    ViewBag.Title = "ASP.NET Web API Help Page";
 
     // Group APIs by controller
     ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = Model.ToLookup(api => api.ActionDescriptor.ControllerDescriptor);
 }
 
 <link type="text/css" href="~/Areas/HelpPage/HelpPage.css" rel="stylesheet" />
+<header class="help-page">
+    <div class="content-wrapper">
+        <div class="float-left">
+            <h1>@ViewBag.Title</h1>
+        </div>
+    </div>
+</header>
 <div id="body" class="help-page">
     <section class="featured">
         <div class="content-wrapper">
-            <div><img src="https://speedup.vn/wp-content/themes/onda/images/logo.svg" width="170" rel="Speed Tech Logo" /></div>
+            <h2>Introduction</h2>
+            <p>
+                Provide a general description of your APIs here.
+            </p>
         </div>
     </section>
     <section class="content-wrapper main-content clear-fix">

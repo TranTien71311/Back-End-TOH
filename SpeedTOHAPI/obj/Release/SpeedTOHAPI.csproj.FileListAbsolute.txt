@@ -60,3 +60,17 @@ C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\obj\Release\SpeedTOHA
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\obj\Release\SpeedTOHAPI.csproj.CopyComplete
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\obj\Release\SpeedTOHAPI.dll
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\obj\Release\SpeedTOHAPI.pdb
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\Newtonsoft.Json.Bson.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Buffers.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Memory.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Threading.Tasks.Extensions.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Web.Cors.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Web.Http.Cors.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\Newtonsoft.Json.Bson.pdb
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\Newtonsoft.Json.Bson.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Buffers.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Memory.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Threading.Tasks.Extensions.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Web.Http.Cors.xml

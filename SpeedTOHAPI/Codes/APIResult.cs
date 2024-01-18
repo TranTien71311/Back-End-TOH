@@ -12,5 +12,6 @@ namespace SpeedTOHAPI.Codes
         public string Exception { set; get; }
         public object Data { set; get; }
         public object Error { set; get; }
+        public int? TotalPages { set; get; }
     }
 }

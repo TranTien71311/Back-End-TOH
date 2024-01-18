@@ -27,5 +27,7 @@ namespace SpeedTOHAPI.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public DietaryPropertieModel DietaryPropertieModels { get; set; }
+        public DateTime? DischargeDate { get; set; }
+        public DateTime? AdmitDate { get; set; }
     }
 }

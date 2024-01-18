@@ -11,23 +11,20 @@
 <div>
     @foreach (var mediaType in mediaTypes)
     {
-        if (mediaType.ToString() != "text/json")
-        {
-            <h4 class="sample-header">@mediaType</h4>
-            <div class="sample-content">
-                @{
-                    var sample = samples[mediaType];
-
-                    if (sample == null)
-                    {
-                        <p>Sample not available.</p>
-                    }
-                    else
-                    {
-                        @Html.Raw(sample.ToString());
-                    }
+        <h4 class="sample-header">@mediaType</h4>
+        <div class="sample-content">
+            <span><b>Sample:</b></span>
+            @{
+                var sample = samples[mediaType];
+                if (sample == null)
+                {
+                    <p>Sample not available.</p>
                 }
-            </div>
-        }
+                else
+                {
+                    @Html.DisplayFor(s => sample);
+                }
+            }
+        </div>
     }
 </div>

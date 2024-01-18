@@ -1,92 +1,63 @@
-﻿@using System.Web.Http
+@using System.Web.Http
 @using System.Web.Http.Description
 @using SpeedTOHAPI.Areas.HelpPage.Models
 @using SpeedTOHAPI.Areas.HelpPage.ModelDescriptions
 @model HelpPageApiModel
 
-@{ 
-    var description = Model.ApiDescription;
-    bool hasParameters = description.ParameterDescriptions.Count > 0;
-    bool hasRequestSamples = Model.SampleRequests.Count > 0;
-    bool hasResponseSamples = Model.SampleResponses.Count > 0;
+@{
+    ApiDescription description = Model.ApiDescription;
 }
 <h1>@description.HttpMethod.Method @description.RelativePath</h1>
 <div>
-    @if (description.Documentation != null)
-    {
-        <p>@description.Documentation</p>
-    }
-    else
-    {
-        <p>No documentation available.</p>
-    }
+    <p>@description.Documentation</p>
 
     <h2>Request Information</h2>
-    <h3>Header</h3>
-    <table class="help-page-table">
-        <thead>
-            <tr><th>Method</th><th>Key</th><th>Value</th></tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="parameter-name"><b>@description.HttpMethod.Method</b></td>
-                <td class="parameter-documentation"><pre>PartnerKey</pre></td>
-                <td class="parameter-source">
-                    @switch (@description.HttpMethod.Method)
-                    {
-                        case "POST":
-                            {
-                                @Html.Raw("<b>Speed ​​POS will provide");
-                                break;
-                            }
-                        case "PUT":
-                            {
-                                @Html.Raw("<b>Speed ​​POS will provide");
-                                break;
-                            }
-
-                        default:
-                            {
-                                @Html.Raw("<b>Speed ​​POS will provide");
-                                break;
-                            }
-
-                    }
-                </td>
-            </tr>
-            <tr>
-                <td class="parameter-name"><b>@description.HttpMethod.Method</b></td>
-                <td class="parameter-documentation"><pre>Token</pre></td>
-                <td class="parameter-source">
-                    @switch (@description.HttpMethod.Method)
-                    {
-                        case "POST":
-                            {
-                                @Html.Raw("<b>HMAC_SHA256</b>(\"/" + description.RelativePath + ".\" + value, SecretKey)");
-                                break;
-                            }
-                        case "PUT":
-                            {
-                                @Html.Raw("<b>HMAC_SHA256</b>(\"/" + description.RelativePath + ".\" + value, SecretKey)");
-                                break;
-                            }
-
-                        default:
-                            {
-                                @Html.Raw("<b>HMAC_SHA256</b>(\"/" + description.RelativePath + "\", SecretKey)");
-                                break;
-                            }
-
-                    }
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
     <h3>URI Parameters</h3>
     @Html.DisplayFor(m => m.UriParameters, "Parameters")
 
+    <h3>Body Parameters</h3>
+
+    <p>@Model.RequestDocumentation</p>
+
+    @if (Model.RequestModelDescription != null)
+    {
+        @Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })
+        if (Model.RequestBodyParameters != null)
+        {
+            @Html.DisplayFor(m => m.RequestBodyParameters, "Parameters")
+        }
+    }
+    else
+    {
+        <p>None.</p>
+    }
+
+    @if (Model.SampleRequests.Count > 0)
+    {
+        <h3>Request Formats</h3>
+        @Html.DisplayFor(m => m.SampleRequests, "Samples")
+    }
+
     <h2>Response Information</h2>
+
+    <h3>Resource Description</h3>
+
+    <p>@description.ResponseDescription.Documentation</p>
+
+    @if (Model.ResourceDescription != null)
+    {
+        @Html.DisplayFor(m => m.ResourceDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.ResourceDescription })
+        if (Model.ResourceProperties != null)
+        {
+            @Html.DisplayFor(m => m.ResourceProperties, "Parameters")
+        }
+    }
+    else
+    {
+        <p>None.</p>
+    }
+
     @if (Model.SampleResponses.Count > 0)
     {
         <h3>Response Formats</h3>

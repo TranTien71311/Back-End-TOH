@@ -10,10 +10,12 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Results;
 
 namespace SpeedTOHAPI.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class PatientDemographicsController : ApiController
     {
         [HttpPost]
@@ -180,8 +182,8 @@ namespace SpeedTOHAPI.Controllers
                         }
 
                       
-                        command.CommandText = @"INSERT INTO dba.Patients(VisitCode, HN, BedCode, Ward, PatientFullName, DoB, Nationality, PrimaryDoctor, FastingFrom, FastingTo, LengthOfStay, PreviousBed, MovedToBed, DoNotOrderFrom, DoNotOrderTo)
-                                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                        command.CommandText = @"INSERT INTO dba.Patients(VisitCode, HN, BedCode, Ward, PatientFullName, DoB, Nationality, PrimaryDoctor, FastingFrom, FastingTo, LengthOfStay, PreviousBed, MovedToBed, DoNotOrderFrom, DoNotOrderTo, DischargeDate, AdmitDate)
+                                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("VisitCode", patient.VisitCode.ToString());
                         command.Parameters.AddWithValue("HN", patient.HN.ToString());
@@ -198,6 +200,8 @@ namespace SpeedTOHAPI.Controllers
                         command.Parameters.AddWithValue("MovedToBed", (patient.MovedToBed == null ? null : patient.MovedToBed));
                         command.Parameters.AddWithValue("DoNotOrderFrom", (patient.DoNotOrderFrom == null ? null : Convert.ToDateTime(patient.DoNotOrderFrom).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                         command.Parameters.AddWithValue("DoNotOrderTo", (patient.DoNotOrderTo == null ? null : Convert.ToDateTime(patient.DoNotOrderTo).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                        command.Parameters.AddWithValue("DischargeDate", (patient.DischargeDate == null ? null : Convert.ToDateTime(patient.DischargeDate).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                        command.Parameters.AddWithValue("AdmitDate", (patient.DoNotOrderTo == null ? null : Convert.ToDateTime(patient.AdmitDate).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                         command.ExecuteNonQuery();
                     }
                     if(Errors.Count > 0)
@@ -401,6 +405,14 @@ namespace SpeedTOHAPI.Controllers
                         {
                             query += ", DoNotOrderTo='" + Convert.ToDateTime(patient.DoNotOrderTo).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture) + "'";
                         }
+                        if (patient.AdmitDate != null)
+                        {
+                            query += ", AdmitDate='" + Convert.ToDateTime(patient.AdmitDate).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture) + "'";
+                        }
+                        if (patient.DischargeDate != null)
+                        {
+                            query += ", DischargeDate='" + Convert.ToDateTime(patient.DischargeDate).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture) + "'";
+                        }
                         if (patient.IsActive != null)
                         {
                             query += ", IsActive='" + patient.IsActive + "'";
@@ -409,7 +421,7 @@ namespace SpeedTOHAPI.Controllers
 
                         command.CommandText = query;
                         command.Parameters.Clear();
-                        command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime(DateTime.Now));
+                        command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                         command.ExecuteNonQuery();
 
                     }
@@ -466,6 +478,8 @@ namespace SpeedTOHAPI.Controllers
                                                string CreatedTo = null,
                                                string ModifiedFrom = null,
                                                string ModifiedTo = null,
+                                               string AdmitDate = null,
+                                               string DischargeDate = null,
                                                Nullable<int> PageSize = null,
                                                Nullable<int> PageNum = null,
                                                string OrderBy = null)
@@ -549,6 +563,8 @@ namespace SpeedTOHAPI.Controllers
                                     PA.MovedToBed,
                                     PA.DoNotOrderFrom,
                                     PA.DoNotOrderTo,
+                                    PA.AdmitDate,
+                                    PA.DischargeDate,
                                     PA.IsActive,
                                     PA.CreatedDate,
                                     PA.ModifiedDate
@@ -606,6 +622,16 @@ namespace SpeedTOHAPI.Controllers
                 {
                     DateTime Date = DateTime.Parse(DoNotOrderTo);
                     query += " AND DoNotOrderTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                }
+                if (AdmitDate != null)
+                {
+                    DateTime Date = DateTime.Parse(AdmitDate);
+                    query += " AND AdmitDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                }
+                if (DischargeDate != null)
+                {
+                    DateTime Date = DateTime.Parse(DischargeDate);
+                    query += " AND DischargeDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (IsActive != null)
                 {

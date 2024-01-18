@@ -11,10 +11,12 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Xml.Linq;
 
 namespace SpeedTOHAPI.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class DietaryPropertiesController : ApiController
     {
         [HttpPost]
