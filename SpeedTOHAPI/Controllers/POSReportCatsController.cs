@@ -11,6 +11,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web;
+using System.IO;
 
 namespace SpeedTOHAPI.Controllers
 {
@@ -19,6 +21,7 @@ namespace SpeedTOHAPI.Controllers
     {
         [HttpPut]
         public APIResult Put([NakedBody] string body)
+        
         {
             APIResult result = new APIResult();
             OdbcConnection conPixelSqlbase = new OdbcConnection();
@@ -91,7 +94,7 @@ namespace SpeedTOHAPI.Controllers
                     foreach (var reportcat in ReportCats)
                     {
                         rowIndex++;
-                        if (reportcat.ReportCatID == null)
+                        if (reportcat.ReportNo == null)
                         {
                             result.Status = 610;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -114,27 +117,30 @@ namespace SpeedTOHAPI.Controllers
                             //UPDATE
                             try
                             {
-                                string query = "UPDATE DBA.POSReportCats SET ModifiedDate= ? ";
-                                if(reportcat.Image != null)
+                                string query = "UPDATE DBA.POSReportCats SET DateModified= ? ";
+                                if(reportcat.Image != null && reportcat.Image != "")
                                 {
-                                    query += ", Image = "+ reportcat.Image +"";
+                                    string img = SaveImage(reportcat.Image, reportcat.ReportNo.ToString());
+                                    Random rnd = new Random();
+                                    ReportCats[0].Image = img + "?" + rnd.Next();
+                                    query += ", Image = '"+ img + "'";
                                 }
                                 if (reportcat.Index != null)
                                 {
-                                    query += ", Index = " + reportcat.Index + "";
+                                    query += @", ""Index"" = '" + reportcat.Index + "'";
                                 }
                                 if (reportcat.IsPublic != null)
                                 {
-                                    query += ", IsPublic = " + reportcat.IsPublic + "";
+                                    query += ", IsPublic = " + Convert.ToInt32(reportcat.IsPublic) + "";
                                 }
                                 query += " WHERE ReportNo='" + reportcat.ReportNo + "'";
 
                                 command.CommandText = query;
                                 command.Parameters.Clear();
-                                command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                 command.ExecuteNonQuery();
 
-                                if (reportcat.Translations.Count() > 0)
+                                if (reportcat.Translations != null && reportcat.Translations.Count() > 0)
                                 {
                                     foreach (var translation in reportcat.Translations)
                                     {
@@ -163,11 +169,11 @@ namespace SpeedTOHAPI.Controllers
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
-                                        command.CommandText = @"SELECT ISNULL(TranslationPOSReportCatID, -1)
+                                        command.CommandText = @"SELECT COUNT(TranslationPOSReportCatID)
                                                                 FROM dba.TranslationPOSReportCats
                                                                 WHERE TranslationID = '" + translation.TranslationID + @"' AND ReportNo = '" + reportcat.ReportNo + "'";
-                                        int TranslationPOSReportCatID = (int)command.ExecuteScalar();
-                                        if (TranslationPOSReportCatID == -1)
+                                        int CountTranslation = (int)command.ExecuteScalar();
+                                        if (CountTranslation == 0)
                                         {
                                             //Insert
                                             command.CommandText = @"INSERT INTO DBA.TranslationPOSReportCats (TranslationID, ReportNo, TranslationType, TranslationText)
@@ -182,14 +188,13 @@ namespace SpeedTOHAPI.Controllers
                                         else
                                         {
                                             //Update
-                                            command.CommandText = @"UPDATE DBA.TranslationPOSQuestions SET TranslationID = ?, ReportNo = ?, TranslationType = ?, TranslationText = ?
-                                                                    WHERE TranslationPOSReportCatID = ?";
+                                            command.CommandText = @"UPDATE DBA.TranslationPOSQuestions SET TranslationType = ?, TranslationText = ?
+                                                                    WHERE TranslationID = ? AND ReportNo = ?,";
                                             command.Parameters.Clear();
-                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
-                                            command.Parameters.AddWithValue("ReportNo", Convert.ToInt32(translation.ReportNo));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
-                                            command.Parameters.AddWithValue("TranslationPOSReportCatID", Convert.ToInt32(TranslationPOSReportCatID));
+                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
+                                            command.Parameters.AddWithValue("ReportNo", Convert.ToInt32(translation.ReportNo));
                                             command.ExecuteNonQuery();
                                         }
                                     }
@@ -325,11 +330,11 @@ namespace SpeedTOHAPI.Controllers
                                     p.SummaryNum AS 'SummaryNum',
                                     p.SummaryName AS 'SummaryName',
                                     p.Course AS 'Course',
-                                    p.Index AS 'Index',
+                                    ""Index"" AS 'Index',
                                     p.IsPublic AS 'IsPublic',
                                     p.DateCreated AS 'DateCreated',
                                     p.DateModified AS 'DateModified',
-                                    p.IsActive AS 'IsActive',
+                                    p.IsActive AS 'IsActive'
                                     FROM DBA.POSReportCats p
                                     WHERE ReportNo <> 0";
 
@@ -355,8 +360,8 @@ namespace SpeedTOHAPI.Controllers
                 }
                 if (Index != null)
                 {
-                    query += " AND p.Index = '" + Index + "'";
-                    queryin += " AND p.Index = '" + Index + "'";
+                    query += @" AND ""Index"" = '" + Index + "'";
+                    queryin += @" AND ""Index"" = '" + Index + "'";
                 }
                 if (IsActive != null)
                 {
@@ -373,17 +378,17 @@ namespace SpeedTOHAPI.Controllers
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY p.ReportNo " + _OrderBy + "";
+                query += @" ORDER BY ""Index"" " + _OrderBy + "";
                 command.CommandText = query;
                 DataTable Data = new DataTable("ReportCats");
                 Data.Load(command.ExecuteReader());
                 List<POSReportCatModel> ReportCats = JsonConvert.DeserializeObject<List<POSReportCatModel>>(JsonConvert.SerializeObject(Data));
 
-                string queryTranlation = "SELECT * FROM DBA.TranlationPOSReportCats WHERE ReportNo IN (" + queryin + ")";
+                string queryTranlation = "SELECT * FROM DBA.TranslationPOSReportCats WHERE ReportNo IN (" + queryin + ")";
                 command.CommandText = queryTranlation;
                 DataTable DataTranlations = new DataTable("Tranlations");
                 DataTranlations.Load(command.ExecuteReader());
-                List<TranslationPOSReportCatModel> Tranlations = JsonConvert.DeserializeObject<List<TranslationPOSReportCatModel>>(JsonConvert.SerializeObject(DataTranlations));
+                List<TranslationPOSReportCatModel> Translations = JsonConvert.DeserializeObject<List<TranslationPOSReportCatModel>>(JsonConvert.SerializeObject(DataTranlations));
 
                 var JoinData = (from data in ReportCats
                                 select new
@@ -400,9 +405,10 @@ namespace SpeedTOHAPI.Controllers
                                     DateCreated  = data.DateCreated,
                                     DateModified  = data.DateModified,
                                     IsActive  = data.IsActive,
-                                    Tranlations = Tranlations.Where(x => x.ReportNo == data.ReportNo).ToList(),
+                                    Translations = Translations.Where(x => x.ReportNo == data.ReportNo).ToList(),
                                 }).ToList();
 
+                result.TotalPages = 1;
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = JoinData;
@@ -418,6 +424,28 @@ namespace SpeedTOHAPI.Controllers
                 conPixelSqlbase.Close();
             }
             return result;
+        }
+
+        public string SaveImage(string ImgStr, string ImgName)
+        {
+            String path = HttpContext.Current.Server.MapPath("~/Images/ReportCats"); //Path
+
+            //Check if directory exist
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path); //Create directory if it doesn't exist
+            }
+
+            string imageName = ImgName + ".jpg";
+
+            //set the image path
+            string imgPath = Path.Combine(path, imageName);
+
+            byte[] imageBytes = Convert.FromBase64String(ImgStr);
+
+            File.WriteAllBytes(imgPath, imageBytes);
+            string imageUrl = "/Images/ReportCats/" + imageName;
+            return imageUrl;
         }
     }
 }

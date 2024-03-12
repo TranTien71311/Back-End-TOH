@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\app.publish\</_PublishTargetUrl>
-    <History>True|2024-01-15T10:19:52.9587941Z;True|2024-01-03T14:39:50.4808976+07:00;True|2023-12-28T16:32:46.6351465+07:00;</History>
+    <History>True|2024-01-19T06:54:49.8046661Z;True|2024-01-15T17:19:52.9587941+07:00;True|2024-01-03T14:39:50.4808976+07:00;True|2023-12-28T16:32:46.6351465+07:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -13,10 +13,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/15/2024 17:17:18</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/Api.cshtml">
-      <publishTime>01/15/2024 17:17:17</publishTime>
+      <publishTime>01/18/2024 17:25:23</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ApiGroup.cshtml">
-      <publishTime>01/15/2024 17:17:17</publishTime>
+      <publishTime>01/18/2024 17:25:01</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/CollectionModelDescription.cshtml">
       <publishTime>01/15/2024 17:17:17</publishTime>
@@ -31,7 +31,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/15/2024 17:17:17</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/HelpPageApiModel.cshtml">
-      <publishTime>01/15/2024 17:17:17</publishTime>
+      <publishTime>01/18/2024 17:24:32</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/ImageSample.cshtml">
       <publishTime>01/15/2024 17:17:15</publishTime>
@@ -49,7 +49,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/15/2024 17:17:15</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/Samples.cshtml">
-      <publishTime>01/15/2024 17:17:15</publishTime>
+      <publishTime>01/18/2024 17:24:43</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/DisplayTemplates/SimpleTypeModelDescription.cshtml">
       <publishTime>01/15/2024 17:17:11</publishTime>
@@ -58,10 +58,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/15/2024 17:17:11</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/Index.cshtml">
-      <publishTime>01/15/2024 17:17:11</publishTime>
+      <publishTime>01/18/2024 17:21:26</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Help/ResourceModel.cshtml">
-      <publishTime>01/15/2024 17:17:09</publishTime>
+      <publishTime>01/18/2024 17:25:08</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/Shared/_Layout.cshtml">
       <publishTime>01/15/2024 17:17:05</publishTime>
@@ -70,7 +70,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/15/2024 17:17:05</publishTime>
     </File>
     <File Include="Areas/HelpPage/Views/_ViewStart.cshtml">
-      <publishTime>01/15/2024 17:17:05</publishTime>
+      <publishTime>01/18/2024 17:28:09</publishTime>
     </File>
     <File Include="bin/Antlr3.Runtime.dll">
       <publishTime>09/10/2013 16:29:20</publishTime>
@@ -172,10 +172,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>06/27/2016 21:50:24</publishTime>
     </File>
     <File Include="bin/SpeedTOHAPI.dll">
-      <publishTime>01/15/2024 17:19:51</publishTime>
+      <publishTime>01/19/2024 13:54:48</publishTime>
     </File>
     <File Include="bin/SpeedTOHAPI.pdb">
-      <publishTime>01/15/2024 17:19:51</publishTime>
+      <publishTime>01/19/2024 13:54:48</publishTime>
     </File>
     <File Include="bin/System.Buffers.dll">
       <publishTime>02/19/2020 17:05:18</publishTime>

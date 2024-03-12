@@ -2,6 +2,7 @@
 using SpeedTOHAPI.Codes;
 using SpeedTOHAPI.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -88,6 +89,10 @@ namespace SpeedTOHAPI.Controllers
                     odbcTransact = conPixelSqlbase.BeginTransaction();
                     command.Transaction = odbcTransact;
 
+                    //string queryData = @"SELECT *
+                    //                    FROM dba.Wards
+                    //                    WHERE IsActive = 1";
+
                     foreach (var ward in Wards)
                     {
                         rowIndex++;
@@ -128,14 +133,22 @@ namespace SpeedTOHAPI.Controllers
                             continue;
                         }
                         command.CommandText = @"INSERT INTO dba.Wards
-                                            (WardID, WardNameEn, WardNameEn)
+                                            (WardID, WardNameEn, WardNameVn)
                                             VALUES(?,?,?)";
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("WardID", ward.WardID.ToString());
                         command.Parameters.AddWithValue("WardNameEn", ward.WardNameEn.ToString());
                         command.Parameters.AddWithValue("WardNameVn", ward.WardNameVn.ToString());
-
                         command.ExecuteNonQuery();
+
+                        //if(rowIndex == 1)
+                        //{
+                        //    queryData += " AND WardID='"+ ward.WardID.ToString() + "'";
+                        //}
+                        //else
+                        //{
+                        //    queryData += " OR WardID='"+ ward.WardID.ToString() + "'";
+                        //}
                     }
                     if (Errors.Count > 0)
                     {
@@ -144,6 +157,10 @@ namespace SpeedTOHAPI.Controllers
                     }
                     else
                     {
+                        //command.CommandText = queryData;
+                        //DataTable Data = new DataTable("Data");
+                        //Data.Load(command.ExecuteReader());
+
                         result.Status = 200;
                         result.Data = Wards;
                         var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -327,15 +344,15 @@ namespace SpeedTOHAPI.Controllers
         }
 
         [HttpGet]
-        public APIResult GET(Nullable<int> WardID = null,
-                                       string CreatedFrom = null,
-                                       string CreatedTo = null,
-                                       string ModifiedFrom = null,
-                                       string ModifiedTo = null,
-                                       Nullable<bool> IsActive = null,
-                                       Nullable<int> PageSize = null,
-                                       Nullable<int> PageNum = null,
-                                       string OrderBy = null)
+        public APIResult GET(string WardID = null,
+                            string CreatedFrom = null,
+                            string CreatedTo = null,
+                            string ModifiedFrom = null,
+                            string ModifiedTo = null,
+                            Nullable<bool> IsActive = null,
+                            Nullable<int> PageSize = null,
+                            Nullable<int> PageNum = null,
+                            string OrderBy = null)
         {
             APIResult result = new APIResult();
             OdbcConnection conPixelSqlbase = new OdbcConnection();
@@ -397,7 +414,7 @@ namespace SpeedTOHAPI.Controllers
                                     W.CreatedDate,
                                     W.ModifiedDate
                                     FROM DBA.Wards W
-                                    WHERE W.WardID <> 0";
+                                    WHERE W.WardID is not null";
 
                 if (WardID != null)
                 {
@@ -432,14 +449,34 @@ namespace SpeedTOHAPI.Controllers
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY WardID " + _OrderBy + "";
+                query += " ORDER BY CreatedDate " + _OrderBy + "";
                 command.CommandText = query;
-                DataTable Data = new DataTable("Patients");
+                DataTable Data = new DataTable("Wards");
                 Data.Load(command.ExecuteReader());
+
+                command.CommandText = @"SELECT COUNT(WardID)
+                                        FROM dba.Wards
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
 
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = Data;
+                result.TotalPages = TotalPages;
             }
             catch (Exception ex)
             {

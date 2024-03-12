@@ -6,9 +6,8 @@
 <div id="body" class="help-page">
     <section class="featured">
         <div class="content-wrapper">
-            <p>
-                @Html.ActionLink("Help Page Home", "Index")
-            </p>
+            <div><img src="https://speedup.vn/wp-content/themes/onda/images/logo.svg" width="170" rel="Speed Tech Logo" /></div>
+            <h3 style="color: #fff;">@("http://" + HttpContext.Current.Request.Url.Host  + "/" + description.RelativePath)</h3>
         </div>
     </section>
     <h1>@Model.Name</h1>

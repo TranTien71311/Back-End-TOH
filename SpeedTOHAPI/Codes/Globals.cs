@@ -215,7 +215,7 @@ namespace SpeedTOHAPI.Codes
             List<MessageModel> rs = new List<MessageModel>();
             int maxLength = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["MaxLengthAPI"]);
             //Any
-            rs.Add(new MessageModel { Status = 200, Function = "Any", Message = "OK", Description = "Xử lí thành công" });
+            rs.Add(new MessageModel { Status = 200, Function = "Any", Message = "Processed successfully", Description = "Xử lí thành công" });
             rs.Add(new MessageModel { Status = 201, Function = "Any", Message = "There is no access to this feature", Description = "Không có quyền truy cập vào tính năng này (Gửi yêu cầu quyền)" });
             rs.Add(new MessageModel { Status = 202, Function = "Any", Message = "Invalid token code", Description = "Mã xác thực không hợp lệ (Kiểm tra Token ở Header)" });
             rs.Add(new MessageModel { Status = 203, Function = "Any", Message = "Token code not found", Description = "Không tìm thấy mã xác thực (Kiểm tra Token ở Header)" });
@@ -239,6 +239,8 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 310, Function = "Patient", Message = "Primary Doctor can not be empty", Description = "Bác sĩ chính không được để trống" });
             rs.Add(new MessageModel { Status = 311, Function = "Patient", Message = "Fasting From can not be empty", Description = "Ngày bắt đầu ăn kiêng không được để trống" });
             rs.Add(new MessageModel { Status = 312, Function = "Patient", Message = "VisitCode & HN does not exist", Description = "VisitCode & HN không tồn tại" });
+            rs.Add(new MessageModel { Status = 313, Function = "Patient", Message = "BedCode does not exist", Description = "BedCode không tồn tại" });
+            rs.Add(new MessageModel { Status = 314, Function = "Patient", Message = "Ward does not exist", Description = "Ward không tồn tại" });
 
             //DietaryPropertie
             rs.Add(new MessageModel { Status = 501, Function = "DietaryPropertie", Message = "Data list Dietary Properties can not be empty", Description = "Danh sách đặc tính dinh dưỡng không được để trống" });
@@ -292,6 +294,13 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 629, Function = "ReportCats", Message = "TranslationType can not be empty!", Description = "TranslationType không được bỏ trống!" });
             rs.Add(new MessageModel { Status = 630, Function = "ReportCats", Message = "TranslationText can not be empty!", Description = "TranslationText không được bỏ trống!" });
 
+            rs.Add(new MessageModel { Status = 631, Function = "SyncData", Message = "SyncID can not be empty!", Description = "SyncID không được bỏ trống!" });
+            rs.Add(new MessageModel { Status = 632, Function = "SyncData", Message = "SyncID does not exists!", Description = "SyncID không tồn tại!" });
+
+            rs.Add(new MessageModel { Status = 633, Function = "SyncPOSSaleType", Message = "Data list POS Sale Type can not be empty!", Description = "Danh sách POS Sale Type không được bỏ trống!" });
+            rs.Add(new MessageModel { Status = 634, Function = "SyncPOSSaleType", Message = "SaleTypeIndex can not be empty!", Description = "SaleTypeIndex không được bỏ trống!" });
+
+            rs.Add(new MessageModel { Status = 643, Function = "SyncPOSSysInfo", Message = "Data list POS SysInfo can not be empty!", Description = "Danh sách POS SysInfo không được bỏ trống!" });
             //Wards 
             rs.Add(new MessageModel { Status = 701, Function = "Wards", Message = "Ward list cannot be empty!", Description = "Danh sách Wards không được để trống!" });
             rs.Add(new MessageModel { Status = 702, Function = "Wards", Message = "WardID cannot be empty!", Description = "WardID không được để trống!" });
@@ -317,7 +326,7 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 902, Function = "Beds", Message = "BedID cannot be empty!", Description = "BedID không được để trống!" });
             rs.Add(new MessageModel { Status = 903, Function = "Beds", Message = "RoomID does not exists!", Description = "RoomID không tồn tại!" });
             rs.Add(new MessageModel { Status = 904, Function = "Beds", Message = "RoomID cannot be empty!", Description = "RoomID không được để trống!" });
-            rs.Add(new MessageModel { Status = 905, Function = "Beds", Message = "BedID already exists!", Description = "RoomID đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 905, Function = "Beds", Message = "BedID already exists!", Description = "BedID đã tồn tại!" });
             rs.Add(new MessageModel { Status = 906, Function = "Beds", Message = "BedName cannot be empty!", Description = "BedName không được để trống!" });
             rs.Add(new MessageModel { Status = 907, Function = "Beds", Message = "RoomID does not exists!", Description = "RoomID không tồn tại!" });
             rs.Add(new MessageModel { Status = 908, Function = "Beds", Message = "BedCode cannot be empty!", Description = "BedCode không được để trống!" });
@@ -327,29 +336,45 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 1002, Function = "Foods", Message = "FoodID cannot be empty!", Description = "FoodID không được để trống!" });
             rs.Add(new MessageModel { Status = 1003, Function = "Foods", Message = "FoodCode cannot be empty!", Description = "FoodCode không được để trống!" });
             rs.Add(new MessageModel { Status = 1004, Function = "Foods", Message = "FoodName cannot be empty!", Description = "FoodName không được để trống!" });
-            rs.Add(new MessageModel { Status = 1005, Function = "Foods", Message = "FoodID does not exists!", Description = "FoodID không tồn tại!" });
-            rs.Add(new MessageModel { Status = 1006, Function = "Foods", Message = "FoodCode already exissts!", Description = "FoodID đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 1005, Function = "Foods", Message = "FoodCode does not exists!", Description = "FoodCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1006, Function = "Foods", Message = "FoodCode already exissts!", Description = "FoodCode đã tồn tại!" });
             //Pantrys 
             rs.Add(new MessageModel { Status = 1101, Function = "Pantrys", Message = "Pantry list cannot be empty!", Description = "Danh sách Pantrys không được để trống!" });
             rs.Add(new MessageModel { Status = 1102, Function = "Pantrys", Message = "PantryID cannot be empty!", Description = "PantryID không được để trống!" });
             rs.Add(new MessageModel { Status = 1103, Function = "Pantrys", Message = "PantryCode cannot be empty!", Description = "PantryCode không được để trống!" });
             rs.Add(new MessageModel { Status = 1104, Function = "Pantrys", Message = "PantryName cannot be empty!", Description = "PantryName không được để trống!" });
-            rs.Add(new MessageModel { Status = 1105, Function = "Pantrys", Message = "PantryID does not exists!", Description = "PantryID không tồn tại!" });
-            rs.Add(new MessageModel { Status = 1106, Function = "Pantrys", Message = "PantryCode already exissts!", Description = "PantryID đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 1105, Function = "Pantrys", Message = "PantryCode does not exists!", Description = "PantryCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1106, Function = "Pantrys", Message = "PantryCode already exissts!", Description = "PantryCode đã tồn tại!" });
             //Kitchens 
             rs.Add(new MessageModel { Status = 1201, Function = "Kitchens", Message = "Kitchen list cannot be empty!", Description = "Danh sách Kitchens không được để trống!" });
             rs.Add(new MessageModel { Status = 1202, Function = "Kitchens", Message = "KitchenID cannot be empty!", Description = "KitchenID không được để trống!" });
             rs.Add(new MessageModel { Status = 1203, Function = "Kitchens", Message = "KitchenCode cannot be empty!", Description = "KitchenCode không được để trống!" });
             rs.Add(new MessageModel { Status = 1204, Function = "Kitchens", Message = "KitchenName cannot be empty!", Description = "KitchenName không được để trống!" });
-            rs.Add(new MessageModel { Status = 1205, Function = "Kitchens", Message = "KitchenID does not exists!", Description = "KitchenID không tồn tại!" });
-            rs.Add(new MessageModel { Status = 1206, Function = "Kitchens", Message = "KitchenCode already exissts!", Description = "KitchenID đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 1205, Function = "Kitchens", Message = "KitchenCode does not exists!", Description = "KitchenCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1206, Function = "Kitchens", Message = "KitchenCode already exissts!", Description = "KitchenCode đã tồn tại!" });
             //Snacks 
             rs.Add(new MessageModel { Status = 1301, Function = "Snacks", Message = "Snack list cannot be empty!", Description = "Danh sách Snacks không được để trống!" });
             rs.Add(new MessageModel { Status = 1302, Function = "Snacks", Message = "SnackID cannot be empty!", Description = "SnackID không được để trống!" });
             rs.Add(new MessageModel { Status = 1303, Function = "Snacks", Message = "SnackCode cannot be empty!", Description = "SnackCode không được để trống!" });
             rs.Add(new MessageModel { Status = 1304, Function = "Snacks", Message = "SnackName cannot be empty!", Description = "SnackName không được để trống!" });
-            rs.Add(new MessageModel { Status = 1305, Function = "Snacks", Message = "SnackID does not exists!", Description = "SnackID không tồn tại!" });
-            rs.Add(new MessageModel { Status = 1306, Function = "Snacks", Message = "SnackCode already exists!", Description = "SnackID đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 1305, Function = "Snacks", Message = "SnackCode does not exists!", Description = "SnackCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1306, Function = "Snacks", Message = "SnackCode already exists!", Description = "SnackCode đã tồn tại!" });
+            //Logins 
+            rs.Add(new MessageModel { Status = 1401, Function = "Login", Message = "LoginType cannot be empty!", Description = "Loại Login không được để trống!" });
+            rs.Add(new MessageModel { Status = 1402, Function = "Login", Message = "UserName cannot be empty!", Description = "UserName không được để trống!" });
+            rs.Add(new MessageModel { Status = 1403, Function = "Login", Message = "Password cannot be empty!", Description = "Password không được để trống!" });
+            rs.Add(new MessageModel { Status = 1404, Function = "Login", Message = "Email cannot be empty!", Description = "Email không được để trống!" });
+            rs.Add(new MessageModel { Status = 1405, Function = "Login", Message = "EmployeeCode does not exists!", Description = "EmployeeCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1406, Function = "Login", Message = "EmployeeCode cannot be empty!", Description = "EmployeeCode không được để trống!" });
+            rs.Add(new MessageModel { Status = 1407, Function = "Login", Message = "Login information is incorrect!", Description = "Thông tin Login không chính xác!" });
+            //Tranlations 
+            rs.Add(new MessageModel { Status = 1501, Function = "Translation", Message = "Tranlation Name cannot be empty!", Description = "Tranlations Name không được để trống!" });
+            rs.Add(new MessageModel { Status = 1502, Function = "Translation", Message = "Tranlation Name already exists!", Description = "Tranlation Name đã tồn tại!" });
+            rs.Add(new MessageModel { Status = 1503, Function = "Translation", Message = "TransactionID cannot be empty!", Description = "TransactionID không được để trống" });
+            rs.Add(new MessageModel { Status = 1504, Function = "Translation", Message = "TransactionID does not exists!", Description = "TransactionID không tồn tại" });
+            rs.Add(new MessageModel { Status = 1405, Function = "Login", Message = "EmployeeCode does not exists!", Description = "EmployeeCode không tồn tại!" });
+            rs.Add(new MessageModel { Status = 1406, Function = "Login", Message = "EmployeeCode cannot be empty!", Description = "EmployeeCode không được để trống!" });
+            rs.Add(new MessageModel { Status = 1407, Function = "Login", Message = "Login information is incorrect!", Description = "Thông tin Login không chính xác!" });
             return rs;
         }
     }

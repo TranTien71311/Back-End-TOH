@@ -377,9 +377,9 @@ namespace SpeedTOHAPI.Controllers
         }
 
         [HttpGet]
-        public APIResult GET(Nullable<int> RoomID = null,
-                                       Nullable<int> RoomCode = null,
-                                       Nullable<int> WardID = null,
+        public APIResult GET(string RoomID = null,
+                                       string RoomCode = null,
+                                       string WardID = null,
                                        string CreatedFrom = null,
                                        string CreatedTo = null,
                                        string ModifiedFrom = null,
@@ -451,7 +451,7 @@ namespace SpeedTOHAPI.Controllers
                                     R.CreatedDate,
                                     R.ModifiedDate
                                     FROM DBA.Rooms R
-                                    WHERE R.RoomID <> 0";
+                                    WHERE R.RoomID is not null";
                 if (RoomID != null)
                 {
                     query += " AND RoomID = '" + RoomID + "'";
@@ -493,14 +493,34 @@ namespace SpeedTOHAPI.Controllers
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY RoomID " + _OrderBy + "";
+                query += " ORDER BY CreatedDate " + _OrderBy + "";
                 command.CommandText = query;
                 DataTable Data = new DataTable("Patients");
                 Data.Load(command.ExecuteReader());
 
+                command.CommandText = @"SELECT COUNT(RoomID)
+                                        FROM dba.Rooms
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
+
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = Data;
+                result.TotalPages = TotalPages;
             }
             catch (Exception ex)
             {

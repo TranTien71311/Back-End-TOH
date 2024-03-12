@@ -182,20 +182,29 @@
     <Compile Include="Controllers\FoodsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KitchensController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\OrderAlacarteController.cs" />
     <Compile Include="Controllers\PatientDemographicsController.cs" />
-    <Compile Include="Controllers\POSForceChoicesController.cs" />
+    <Compile Include="Controllers\POSForcedChoicesController.cs" />
     <Compile Include="Controllers\POSProductCombosController.cs" />
     <Compile Include="Controllers\POSProductsController.cs" />
     <Compile Include="Controllers\POSQuestionsController.cs" />
     <Compile Include="Controllers\POSReportCatsController.cs" />
+    <Compile Include="Controllers\POSSaleTypesController.cs" />
+    <Compile Include="Controllers\POSSysInfoController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\SnacksController.cs" />
     <Compile Include="Controllers\SyncDataController.cs" />
     <Compile Include="Controllers\SyncPOSReportCatsController.cs" />
-    <Compile Include="Controllers\SyncForcedChoicesController.cs" />
+    <Compile Include="Controllers\SyncPOSForcedChoicesController.cs" />
     <Compile Include="Controllers\SyncPOSProductCombosController.cs" />
     <Compile Include="Controllers\SyncPOSProductsController.cs" />
     <Compile Include="Controllers\SyncPOSQuestionsController.cs" />
+    <Compile Include="Controllers\SyncPOSSaleTypesController.cs" />
+    <Compile Include="Controllers\SyncPOSSysInfoController.cs" />
+    <Compile Include="Controllers\TransactionAlacarteController.cs" />
+    <Compile Include="Controllers\TransactionDetailAlacarteController.cs" />
+    <Compile Include="Controllers\TranslationsController.cs" />
     <Compile Include="Controllers\WardsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -208,20 +217,29 @@
     <Compile Include="Models\FoodAllergieModel.cs" />
     <Compile Include="Models\FoodModal.cs" />
     <Compile Include="Models\KitchenModel.cs" />
+    <Compile Include="Models\LoginModal.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\MenuTypeModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Models\MsgModel.cs" />
+    <Compile Include="Models\OrderAlacarteModel.cs" />
     <Compile Include="Models\PantryModel.cs" />
-    <Compile Include="Models\PantrysController.cs" />
+    <Compile Include="Controllers\PantrysController.cs" />
     <Compile Include="Models\PatientModel.cs" />
+    <Compile Include="Models\POSDetailModel.cs" />
     <Compile Include="Models\POSForcedChoiceModel.cs" />
+    <Compile Include="Models\POSHeaderModel.cs" />
     <Compile Include="Models\POSProductComboModel.cs" />
     <Compile Include="Models\POSProductModel.cs" />
     <Compile Include="Models\POSQuestionModel.cs" />
     <Compile Include="Models\POSReportCatModel.cs" />
+    <Compile Include="Models\POSSaleTypeModel.cs" />
+    <Compile Include="Models\POSSysInfoModel.cs" />
     <Compile Include="Models\RoomModel.cs" />
     <Compile Include="Models\SnackModel.cs" />
     <Compile Include="Models\SyncDataModel.cs" />
+    <Compile Include="Models\TransactionAlacarteModel.cs" />
+    <Compile Include="Models\TransactionDetailAlacarteModel.cs" />
     <Compile Include="Models\TranslationModel.cs" />
     <Compile Include="Models\TranslationPOSForceChoiceModel.cs" />
     <Compile Include="Models\TranslationPOSProductComboModel.cs" />
@@ -229,6 +247,8 @@
     <Compile Include="Models\TranslationPOSReportCatModel.cs" />
     <Compile Include="Models\TranslationQuestionModel.cs" />
     <Compile Include="Models\UpdateDatabaseModel.cs" />
+    <Compile Include="Models\UserGroupModal.cs" />
+    <Compile Include="Models\UserModal.cs" />
     <Compile Include="Models\WardModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -383,6 +403,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\Products\" />
+    <Folder Include="Images\ReportCats\" />
     <Folder Include="Views\APISettings\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>

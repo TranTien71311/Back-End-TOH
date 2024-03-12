@@ -99,11 +99,11 @@ namespace SpeedTOHAPI.Controllers
                         }
                         else
                         {
-                            command.CommandText = @"SELECT ISNULL(ReportNo, -1)
+                            command.CommandText = @"SELECT Count(ReportNo)
                                         FROM dba.POSReportCats
                                         WHERE ReportNo = '" + reportcat.ReportNo + @"'";
-                            int ReportNo = (int)command.ExecuteScalar();
-                            if (ReportNo != -1)
+                            int CountReportNo = (int)command.ExecuteScalar();
+                            if (CountReportNo > 0)
                             {
                                 //UPDATE
                                 try
@@ -116,7 +116,7 @@ namespace SpeedTOHAPI.Controllers
                                     command.Parameters.AddWithValue("ReportName", reportcat.ReportName.ToString());
                                     command.Parameters.AddWithValue("SummaryNum", Convert.ToInt32(reportcat.SummaryNum));
                                     command.Parameters.AddWithValue("SummaryName", reportcat.SummaryName.ToString());
-                                    command.Parameters.AddWithValue("Course", Convert.ToBoolean(reportcat.Course));
+                                    command.Parameters.AddWithValue("Course", (reportcat.Course != null ? Convert.ToBoolean(reportcat.Course) : false));
                                     command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                     command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(reportcat.IsActive));
                                     command.Parameters.AddWithValue("ReportNo", Convert.ToInt32(reportcat.ReportNo));
@@ -133,14 +133,14 @@ namespace SpeedTOHAPI.Controllers
                         try
                         {
                             command.CommandText = @"INSERT INTO dba.POSReportCats
-                                                SET ReportNo, ReportName,SummaryNum, SummaryName,Course,IsActive)
+                                                (ReportNo, ReportName,SummaryNum, SummaryName,Course,IsActive)
                                                 VALUES(?,?,?,?,?,?)";
                             command.Parameters.Clear();
                             command.Parameters.AddWithValue("ReportNo", Convert.ToInt32(reportcat.ReportNo));
                             command.Parameters.AddWithValue("ReportName", reportcat.ReportName.ToString());
                             command.Parameters.AddWithValue("SummaryNum", Convert.ToInt32(reportcat.SummaryNum));
                             command.Parameters.AddWithValue("SummaryName", reportcat.SummaryName.ToString());
-                            command.Parameters.AddWithValue("Course", Convert.ToBoolean(reportcat.Course));
+                            command.Parameters.AddWithValue("Course", (reportcat.Course != null ? Convert.ToBoolean(reportcat.Course) : false));
                             command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(reportcat.IsActive));
                             
                             command.ExecuteNonQuery();

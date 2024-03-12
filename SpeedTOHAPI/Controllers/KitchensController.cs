@@ -122,7 +122,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         command.CommandText = @"INSERT INTO dba.Kitchens
                                             ( KitchenCode, KitchenName)
-                                            VALUES(?,?,?)";
+                                            VALUES(?,?)";
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("KitchenCode", Kitchen.KitchenCode.ToString());
                         command.Parameters.AddWithValue("KitchenName", Kitchen.KitchenName.ToString());
@@ -256,7 +256,7 @@ namespace SpeedTOHAPI.Controllers
 
                         if (CountWard == 0)
                         {
-                            result.Status = 1206;
+                            result.Status = 1205;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
@@ -426,14 +426,34 @@ namespace SpeedTOHAPI.Controllers
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY WardID " + _OrderBy + "";
+                query += " ORDER BY KitchenID " + _OrderBy + "";
                 command.CommandText = query;
-                DataTable Data = new DataTable("Patients");
+                DataTable Data = new DataTable("Data");
                 Data.Load(command.ExecuteReader());
+
+                command.CommandText = @"SELECT COUNT(KitchenID)
+                                        FROM dba.Kitchens
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
 
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = Data;
+                result.TotalPages = TotalPages;
             }
             catch (Exception ex)
             {

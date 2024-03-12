@@ -99,11 +99,11 @@ namespace SpeedTOHAPI.Controllers
                         }
                         else
                         {
-                            command.CommandText = @"SELECT ISNULL(ProductComboID, -1)
+                            command.CommandText = @"SELECT COUNT(ProductComboID)
                                         FROM dba.POSProductCombos
                                         WHERE ProductComboID = '" + productcombo.ProductComboID + @"'";
-                            int ProductComboID = (int)command.ExecuteScalar();
-                            if (ProductComboID != -1)
+                            int CountProductComboID = (int)command.ExecuteScalar();
+                            if (CountProductComboID > 0)
                             {
                                 //UPDATE
                                 try

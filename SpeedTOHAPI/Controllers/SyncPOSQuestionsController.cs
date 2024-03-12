@@ -99,11 +99,11 @@ namespace SpeedTOHAPI.Controllers
                         }
                         else
                         {
-                            command.CommandText = @"SELECT ISNULL(OptionIndex, -1)
+                            command.CommandText = @"SELECT Count(OptionIndex)
                                         FROM dba.POSQuestions
                                         WHERE OptionIndex = '" + question.OptionIndex + @"'";
-                            int OptionIndex = (int)command.ExecuteScalar();
-                            if (OptionIndex != -1)
+                            int CountOptionIndex = (int)command.ExecuteScalar();
+                            if (CountOptionIndex > 0)
                             {
                                 //UPDATE
                                 try
@@ -118,9 +118,18 @@ namespace SpeedTOHAPI.Controllers
                                     command.Parameters.AddWithValue("Descript", question.Descript.ToString());
                                     command.Parameters.AddWithValue("Forced", Convert.ToInt32(question.Forced));
                                     command.Parameters.AddWithValue("NumChoice", Convert.ToInt32(question.NumChoice));
-                                    command.Parameters.AddWithValue("Allowmulti", Convert.ToInt32(question.Allowmulti));
-                                    command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                    
+                                    if (question.Allowmulti != null)
+                                    {
+                                        command.Parameters.AddWithValue("Allowmulti", Convert.ToUInt32(question.Allowmulti));
+                                    }
+                                    else
+                                    {
+                                        command.Parameters.AddWithValue("Allowmulti", DBNull.Value);
+                                    }
                                     command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(question.IsActive));
+                                    command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                    
                                     command.Parameters.AddWithValue("OptionIndex", Convert.ToInt32(question.OptionIndex));
                                     command.ExecuteNonQuery();
                                 }
@@ -136,15 +145,22 @@ namespace SpeedTOHAPI.Controllers
                         {
                             command.CommandText = @"INSERT INTO dba.POSQuestions
                                                 (OptionIndex,Question,Descript,Forced, NumChoice, 
-                                                Allowmulti, IsActive, DateModified)
-                                                VALUES(?,?,?,?,?,?,?,?)";
+                                                Allowmulti, IsActive)
+                                                VALUES(?,?,?,?,?,?,?)";
                             command.Parameters.Clear();
                             command.Parameters.AddWithValue("OptionIndex", Convert.ToInt32(question.OptionIndex));
                             command.Parameters.AddWithValue("Question", question.Question.ToString());
                             command.Parameters.AddWithValue("Descript", question.Descript.ToString());
                             command.Parameters.AddWithValue("Forced", Convert.ToInt32(question.Forced));
                             command.Parameters.AddWithValue("NumChoice", Convert.ToInt32(question.NumChoice));
-                            command.Parameters.AddWithValue("Allowmulti", Convert.ToInt32(question.Allowmulti));
+                            if (question.Allowmulti != null)
+                            {
+                                command.Parameters.AddWithValue("Allowmulti", Convert.ToUInt32(question.Allowmulti));
+                            }
+                            else
+                            {
+                                command.Parameters.AddWithValue("Allowmulti", DBNull.Value);
+                            }
                             command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(question.IsActive));
                             command.ExecuteNonQuery();
                         }

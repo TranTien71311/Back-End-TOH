@@ -15,7 +15,7 @@ using System.Web.Http.Cors;
 namespace SpeedTOHAPI.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class POSForceChoicesController : ApiController
+    public class POSForcedChoicesController : ApiController
     {
         [HttpPut]
         public APIResult Put([NakedBody] string body)
@@ -114,12 +114,12 @@ namespace SpeedTOHAPI.Controllers
                             //UPDATE
                             try
                             {
-                                string query = "UPDATE DBA.POSForcedChoices SET ModifiedDate= ? ";
+                                string query = "UPDATE DBA.POSForcedChoices SET DateModified= ? ";
                                 query += " WHERE UniqueID='" + forcedchoice.UniqueID + "'";
 
                                 command.CommandText = query;
                                 command.Parameters.Clear();
-                                command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                 command.ExecuteNonQuery();
 
                                 if (forcedchoice.Translations.Count() > 0)
@@ -140,25 +140,25 @@ namespace SpeedTOHAPI.Controllers
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
-                                        command.CommandText = @"SELECT ISNULL(TranslationID, -1)
+                                        command.CommandText = @"SELECT Count(TranslationID)
                                         FROM dba.Translations
                                         WHERE TranslationID = '" + translation.TranslationID + @"'";
-                                        int TranslationID = (int)command.ExecuteScalar();
-                                        if (TranslationID == -1)
+                                        int CountTranslationID = (int)command.ExecuteScalar();
+                                        if (CountTranslationID == 0)
                                         {
                                             result.Status = 619;
                                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
-                                        command.CommandText = @"SELECT ISNULL(TranslationPOSForceChoiceID, -1)
-                                        FROM dba.TranslationPOSForceChoices
+                                        command.CommandText = @"SELECT COUNT(TranslationForcedChoiceID)
+                                        FROM dba.TranslationPOSForcedChoices
                                         WHERE TranslationID = '" + translation.TranslationID + @"' AND UniqueID = '" + forcedchoice.UniqueID + "'";
-                                        int TranslationPOSForceChoiceID = (int)command.ExecuteScalar();
-                                        if (TranslationPOSForceChoiceID == -1)
+                                        int CountTranslationPOSForcedChoiceID = (int)command.ExecuteScalar();
+                                        if (CountTranslationPOSForcedChoiceID == 0)
                                         {
                                             //Insert
-                                            command.CommandText = @"INSERT INTO DBA.TranslationPOSForceChoices (TranslationID, UniqueID, TranslationType, TranslationText)
+                                            command.CommandText = @"INSERT INTO DBA.TranslationPOSForcedChoices (TranslationID, UniqueID, TranslationType, TranslationText)
                                                                     VALUES (?,?,?,?)";
                                             command.Parameters.Clear();
                                             command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
@@ -170,14 +170,13 @@ namespace SpeedTOHAPI.Controllers
                                         else
                                         {
                                             //Update
-                                            command.CommandText = @"UPDATE DBA.TranslationPOSForceChoices SET TranslationID = ?, UniqueID = ?, TranslationType = ?, TranslationText = ?
-                                                                    WHERE TranslationPOSForceChoiceID = ?";
+                                            command.CommandText = @"UPDATE DBA.TranslationPOSForcedChoices SET TranslationType = ?, TranslationText = ?
+                                                                    WHERE TranslationID = ? AND UniqueID = ?";
                                             command.Parameters.Clear();
-                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
-                                            command.Parameters.AddWithValue("UniqueID", Convert.ToInt32(translation.UniqueID));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
-                                            command.Parameters.AddWithValue("TranslationPOSForceChoiceID", Convert.ToInt32(TranslationPOSForceChoiceID));
+                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
+                                            command.Parameters.AddWithValue("UniqueID", Convert.ToInt32(translation.UniqueID));
                                             command.ExecuteNonQuery();
                                         }
                                     }
@@ -185,7 +184,7 @@ namespace SpeedTOHAPI.Controllers
                             }
                             catch (Exception ex)
                             {
-                                var msg = new MessageModel { Status = 205, Function = "POSProduct", Message = ex.Message, Description = ex.ToString() };
+                                var msg = new MessageModel { Status = 205, Function = "POSForcedChoices", Message = ex.Message, Description = ex.ToString() };
                                 Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             }
                         }
@@ -301,7 +300,7 @@ namespace SpeedTOHAPI.Controllers
                 }
                 string queryin = @"SELECT TOP " + _PageSize + @" START AT " + (_PageNum == 0 ? 1 : ((_PageNum * _PageSize) + 1)) + @" 
                                     p.UniqueID AS 'UniqueID'
-                                    FROM DBA.POSForcedChoices f
+                                    FROM DBA.POSForcedChoices p
                                     WHERE ForcedChoiceID <> 0";
 
                 string query = @"SELECT TOP " + _PageSize + @" START AT " + (_PageNum == 0 ? 1 : ((_PageNum * _PageSize) + 1)) + @" 
@@ -316,8 +315,8 @@ namespace SpeedTOHAPI.Controllers
                                     p.Price AS 'Price',
                                     p.DateCreated AS 'DateCreated',
                                     p.DateModified AS 'DateModified',
-                                    p.IsActive AS 'IsActive',
-                                    FROM DBA.POSProductCombos p
+                                    p.IsActive AS 'IsActive'
+                                    FROM DBA.POSForcedChoices p
                                     WHERE ForcedChoiceID <> 0";
 
                 if (ForcedChoiceID != null)
@@ -347,8 +346,8 @@ namespace SpeedTOHAPI.Controllers
                 }
                 if (IsActive != null)
                 {
-                    query += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
-                    queryin += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    query += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    queryin += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
@@ -361,7 +360,7 @@ namespace SpeedTOHAPI.Controllers
                 Data.Load(command.ExecuteReader());
                 List<POSForcedChoiceModel> ForcedChoices = JsonConvert.DeserializeObject<List<POSForcedChoiceModel>>(JsonConvert.SerializeObject(Data));
 
-                string queryTranlation = "SELECT * FROM DBA.TranlationPOSForcedChoices WHERE UniqueID IN (" + queryin + ")";
+                string queryTranlation = "SELECT * FROM DBA.TranslationPOSForcedChoices WHERE UniqueID IN (" + queryin + ")";
                 command.CommandText = queryTranlation;
                 DataTable DataTranlations = new DataTable("Tranlations");
                 DataTranlations.Load(command.ExecuteReader());
@@ -382,10 +381,11 @@ namespace SpeedTOHAPI.Controllers
                                     DateCreated = data.DateCreated,
                                     DateModified = data.DateModified,
                                     IsActive = data.IsActive,
-                                    Tranlations = Tranlations.Where(x => x.UniqueID == data.UniqueID).ToList(),
+                                    Translations = Tranlations.Where(x => x.UniqueID == data.UniqueID).ToList(),
                                 }).ToList();
 
                 result.Status = 200;
+                result.TotalPages = 1;
                 result.Message = "OK";
                 result.Data = JoinData;
             }

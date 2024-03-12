@@ -10,9 +10,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace SpeedTOHAPI.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SnacksController : ApiController
     {
         [HttpPost]
@@ -120,7 +122,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         command.CommandText = @"INSERT INTO dba.Snacks
                                             ( SnackCode, SnackName)
-                                            VALUES(?,?,?)";
+                                            VALUES(?,?)";
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("SnackCode", Snack.SnackCode.ToString());
                         command.Parameters.AddWithValue("SnackName", Snack.SnackName.ToString());
@@ -254,7 +256,7 @@ namespace SpeedTOHAPI.Controllers
 
                         if (CountWard == 0)
                         {
-                            result.Status = 1306;
+                            result.Status = 1305;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
@@ -424,14 +426,35 @@ namespace SpeedTOHAPI.Controllers
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY WardID " + _OrderBy + "";
+                query += " ORDER BY SnackID " + _OrderBy + "";
+
                 command.CommandText = query;
-                DataTable Data = new DataTable("Patients");
+                DataTable Data = new DataTable("Data");
                 Data.Load(command.ExecuteReader());
+
+                command.CommandText = @"SELECT COUNT(SnackID)
+                                        FROM dba.Snacks
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
 
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = Data;
+                result.TotalPages = TotalPages;
             }
             catch (Exception ex)
             {

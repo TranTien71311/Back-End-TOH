@@ -14,7 +14,7 @@ using System.Web.Http.Cors;
 namespace SpeedTOHAPI.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class SyncForcedChoicesController : ApiController
+    public class SyncPOSForcedChoicesController : ApiController
     {
         [HttpPost]
         public APIResult Post([NakedBody] string body)
@@ -99,11 +99,11 @@ namespace SpeedTOHAPI.Controllers
                         }
                         else
                         {
-                            command.CommandText = @"SELECT ISNULL(UniqueID, -1)
+                            command.CommandText = @"SELECT Count(UniqueID)
                                         FROM dba.POSForcedchoices
                                         WHERE UniqueID = '" + ForcedChoice.UniqueID + @"'";
-                            int UniqueID = (int)command.ExecuteScalar();
-                            if (UniqueID != -1)
+                            int CountUniqueID = (int)command.ExecuteScalar();
+                            if (CountUniqueID > 0)
                             {
                                 //UPDATE
                                 try
@@ -121,8 +121,8 @@ namespace SpeedTOHAPI.Controllers
                                     command.Parameters.AddWithValue("ChoiceProductNum", Convert.ToInt32(ForcedChoice.ChoiceProductNum));
                                     command.Parameters.AddWithValue("ChoiceProductName", ForcedChoice.ChoiceProductName.ToString());
                                     command.Parameters.AddWithValue("Price", Convert.ToDouble(ForcedChoice.Price));
-                                    command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                     command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(ForcedChoice.IsActive));
+                                    command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                     command.Parameters.AddWithValue("UniqueID", Convert.ToInt32(ForcedChoice.UniqueID));
                                     command.ExecuteNonQuery();
                                 }

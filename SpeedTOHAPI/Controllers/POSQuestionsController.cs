@@ -114,12 +114,12 @@ namespace SpeedTOHAPI.Controllers
                             //UPDATE
                             try
                             {
-                                string query = "UPDATE DBA.POSQuestions SET ModifiedDate= ? ";
+                                string query = "UPDATE DBA.POSQuestions SET DateModified= ? ";
                                 query += " WHERE OptionIndex='" + question.OptionIndex + "'";
 
                                 command.CommandText = query;
                                 command.Parameters.Clear();
-                                command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                 command.ExecuteNonQuery();
 
                                 if (question.Translations.Count() > 0)
@@ -128,34 +128,34 @@ namespace SpeedTOHAPI.Controllers
                                     {
                                         if (translation.TranslationType == null)
                                         {
-                                            result.Status = 624;
+                                            result.Status = 625;
                                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
                                         if (translation.TranslationText == null || translation.TranslationText == "")
                                         {
-                                            result.Status = 625;
-                                            var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                                            Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
-                                            continue;
-                                        }
-                                        command.CommandText = @"SELECT ISNULL(OptionIndex, -1)
-                                                                FROM dba.Translations
-                                                                WHERE OptionIndex = '" + translation.OptionIndex + @"'";
-                                        int TranslationID = (int)command.ExecuteScalar();
-                                        if (TranslationID == -1)
-                                        {
                                             result.Status = 626;
                                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
-                                        command.CommandText = @"SELECT ISNULL(TranslationPOSQuestionID, -1)
+                                        command.CommandText = @"SELECT Count(TranslationID)
+                                                                FROM dba.Translations
+                                                                WHERE TranslationID = '" + translation.TranslationID + @"'";
+                                        int TranslationID = (int)command.ExecuteScalar();
+                                        if (TranslationID == 0)
+                                        {
+                                            result.Status = 624;
+                                            var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                                            Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                                            continue;
+                                        }
+                                        command.CommandText = @"SELECT COUNT(TranslationPOSQuestionID)
                                                                 FROM dba.TranslationPOSQuestions
                                                                 WHERE TranslationID = '" + translation.TranslationID + @"' AND OptionIndex = '" + question.OptionIndex + "'";
-                                        int TranslationPOSQuestionID = (int)command.ExecuteScalar();
-                                        if (TranslationPOSQuestionID == -1)
+                                        int CountTranslationPOSQuestionID = (int)command.ExecuteScalar();
+                                        if (CountTranslationPOSQuestionID == 0)
                                         {
                                             //Insert
                                             command.CommandText = @"INSERT INTO DBA.TranslationPOSQuestions (TranslationID, OptionIndex, TranslationType, TranslationText)
@@ -170,14 +170,13 @@ namespace SpeedTOHAPI.Controllers
                                         else
                                         {
                                             //Update
-                                            command.CommandText = @"UPDATE DBA.TranslationPOSQuestions SET TranslationID = ?, OptionIndex = ?, TranslationType = ?, TranslationText = ?
-                                                                    WHERE TranslationPOSQuestionID = ?";
+                                            command.CommandText = @"UPDATE DBA.TranslationPOSQuestions SET TranslationType = ?, TranslationText = ?
+                                                                    WHERE TranslationID = ? AND OptionIndex = ?";
                                             command.Parameters.Clear();
-                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
-                                            command.Parameters.AddWithValue("OptionIndex", Convert.ToInt32(translation.OptionIndex));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
-                                            command.Parameters.AddWithValue("TranslationPOSQuestionID", Convert.ToInt32(TranslationPOSQuestionID));
+                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
+                                            command.Parameters.AddWithValue("OptionIndex", Convert.ToInt32(translation.OptionIndex));
                                             command.ExecuteNonQuery();
                                         }
                                     }
@@ -300,8 +299,8 @@ namespace SpeedTOHAPI.Controllers
                     _PageSize = Convert.ToInt32(PageSize);
                 }
                 string queryin = @"SELECT TOP " + _PageSize + @" START AT " + (_PageNum == 0 ? 1 : ((_PageNum * _PageSize) + 1)) + @" 
-                                    p.UniqueID AS 'UniqueID'
-                                    FROM DBA.POSQuestions f
+                                    p.OptionIndex AS 'OptionIndex'
+                                    FROM DBA.POSQuestions p
                                     WHERE OptionIndex <> 0";
 
                 string query = @"SELECT TOP " + _PageSize + @" START AT " + (_PageNum == 0 ? 1 : ((_PageNum * _PageSize) + 1)) + @" 
@@ -313,7 +312,7 @@ namespace SpeedTOHAPI.Controllers
                                     p.Allowmulti AS 'Allowmulti',
                                     p.DateCreated AS 'DateCreated',
                                     p.DateModified AS 'DateModified',
-                                    p.IsActive AS 'IsActive',
+                                    p.IsActive AS 'IsActive'
                                     FROM DBA.POSQuestions p
                                     WHERE OptionIndex <> 0";
 
@@ -344,8 +343,8 @@ namespace SpeedTOHAPI.Controllers
                 }
                 if (IsActive != null)
                 {
-                    query += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
-                    queryin += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    query += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    queryin += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
@@ -358,7 +357,7 @@ namespace SpeedTOHAPI.Controllers
                 Data.Load(command.ExecuteReader());
                 List<POSQuestionModel> Questions = JsonConvert.DeserializeObject<List<POSQuestionModel>>(JsonConvert.SerializeObject(Data));
 
-                string queryTranlation = "SELECT * FROM DBA.TranlationPOSQuestions WHERE OptionIndex IN (" + queryin + ")";
+                string queryTranlation = "SELECT * FROM DBA.TranslationPOSQuestions WHERE OptionIndex IN (" + queryin + ")";
                 command.CommandText = queryTranlation;
                 DataTable DataTranlations = new DataTable("Tranlations");
                 DataTranlations.Load(command.ExecuteReader());
@@ -380,6 +379,25 @@ namespace SpeedTOHAPI.Controllers
                                     Tranlations = Tranlations.Where(x => x.OptionIndex == data.OptionIndex).ToList(),
                                 }).ToList();
 
+                command.CommandText = @"SELECT COUNT(QuestionID)
+                                        FROM dba.POSQuestions
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
+                result.TotalPages = TotalPages;
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = JoinData;

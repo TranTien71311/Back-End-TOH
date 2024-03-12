@@ -37,6 +37,12 @@ namespace SpeedTOHAPI.Models
         public DateTime? DateModified { get; set;}
         public bool? IsActive { get; set; }
         public List<TranslationPOSProductModel> Translations { get; set; }
-
+        public string Question1 { get; set; }
+        public string Question2 { get; set; }
+        public string Question3 { get; set; }
+        public string Question4 { get; set; }
+        public string Question5 { get; set; }
+        public string TimeStartOrder { get; set; }
+        public string TimeEndOrder { get; set; }
     }
 }

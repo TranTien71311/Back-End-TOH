@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using SpeedTOHAPI.Codes;
 using SpeedTOHAPI.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
@@ -81,18 +82,8 @@ namespace SpeedTOHAPI.Controllers
                 List<ErrorModel> Errors = new List<ErrorModel>();
 
                 OdbcCommand command = new OdbcCommand();
-                try
-                {
-                    conPixelSqlbase.Open();
-                    command.Connection = conPixelSqlbase;
-                }
-                catch
-                {
-                    result.Status = 207;
-                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                    result.Message = msg != null ? msg.Message : "";
-                    return result;
-                }
+                conPixelSqlbase.Open();
+                command.Connection = conPixelSqlbase;
 
                 OdbcTransaction odbcTransact = null;
                 try
@@ -138,9 +129,36 @@ namespace SpeedTOHAPI.Controllers
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
                         }
+                        command.CommandText = @"SELECT COUNT(BedCode)
+                                        FROM dba.Beds
+                                        WHERE BedCode = '" + patient.BedCode + @"'
+                                          AND IsActive = 1";
+                        int CountBed = (int)command.ExecuteScalar();
+
+                        if (CountBed == 0)
+                        {
+                            result.Status = 313;
+                            var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                            Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                            continue;
+                        }
+
                         if (patient.Ward == null)
                         {
                             result.Status = 306;
+                            var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                            Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                            continue;
+                        }
+                        command.CommandText = @"SELECT COUNT(WardID)
+                                        FROM dba.Wards
+                                        WHERE WardID = '" + patient.Ward + @"'
+                                          AND IsActive = 1";
+                        int CountWard = (int)command.ExecuteScalar();
+
+                        if (CountWard == 0)
+                        {
+                            result.Status = 314;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
@@ -300,19 +318,10 @@ namespace SpeedTOHAPI.Controllers
                 }
                 int rowIndex = 0;
                 List<ErrorModel> Errors = new List<ErrorModel>();
+
                 OdbcCommand command = new OdbcCommand();
-                try
-                {
-                    conPixelSqlbase.Open();
-                    command.Connection = conPixelSqlbase;
-                }
-                catch 
-                {
-                    result.Status = 207;
-                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                    result.Message = msg != null ? msg.Message : "";
-                    return result;
-                }
+                conPixelSqlbase.Open();
+                command.Connection = conPixelSqlbase;
 
                 OdbcTransaction odbcTransact = null;
                 try
@@ -355,10 +364,36 @@ namespace SpeedTOHAPI.Controllers
                         string query = "UPDATE DBA.Patients SET ModifiedDate= ? ";
                         if (patient.BedCode != null)
                         {
+                            command.CommandText = @"SELECT COUNT(BedCode)
+                                        FROM dba.Beds
+                                        WHERE BedCode = '" + patient.BedCode + @"'
+                                          AND IsActive = 1";
+                            int CountBed = (int)command.ExecuteScalar();
+
+                            if (CountBed == 0)
+                            {
+                                result.Status = 313;
+                                var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                                Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                                continue;
+                            }
                             query += ", BedCode='" + patient.BedCode + "'";
                         }
                         if (patient.Ward != null)
                         {
+                            command.CommandText = @"SELECT COUNT(WardID)
+                                        FROM dba.Wards
+                                        WHERE WardID = '" + patient.Ward + @"'
+                                          AND IsActive = 1";
+                            int CountWard = (int)command.ExecuteScalar();
+
+                            if (CountWard == 0)
+                            {
+                                result.Status = 314;
+                                var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                                Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                                continue;
+                            }
                             query += ", Ward='" + patient.Ward + "'";
                         }
                         if (patient.PatientFullName != null)
@@ -551,7 +586,10 @@ namespace SpeedTOHAPI.Controllers
                                     PA.VisitCode,
                                     PA.HN,
                                     PA.BedCode,
-                                    PA.Ward,
+                                    B.BedName,
+                                    R.RoomID,
+                                    R.RoomNameEn AS 'RoomName',
+                                    W.WardNameEn AS 'WardName',
                                     PA.PatientFullName,
                                     PA.DoB,
                                     PA.Nationality,
@@ -569,6 +607,9 @@ namespace SpeedTOHAPI.Controllers
                                     PA.CreatedDate,
                                     PA.ModifiedDate
                                     FROM DBA.Patients PA
+                                    LEFT JOIN DBA.Beds B ON PA.BedCode = B.BedCode
+                                    LEFT JOIN DBA.Rooms R ON B.RoomID = R.RoomID
+                                    LEFT JOIN DBA.Wards W ON R.WardID = W.WardID
                                     WHERE PatientID <> 0";
 
                 if (PantientID != null)
@@ -585,83 +626,84 @@ namespace SpeedTOHAPI.Controllers
                 }
                 if (BedCode != null)
                 {
-                    query += " AND BedCode = '" + BedCode + "'";
+                    query += " AND PA.BedCode = '" + BedCode + "'";
                 }
                 if (DoB != null)
                 {
-                    query += " AND DoB = '" + DoB + "'";
+                    query += " AND PA.DoB = '" + DoB + "'";
                 }
                 if (FastingFrom != null)
                 {
                     DateTime Date = DateTime.Parse(FastingFrom);
-                    query += " AND FastingFrom >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.FastingFrom >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (FastingTo != null)
                 {
                     DateTime Date = DateTime.Parse(FastingTo);
-                    query += " AND FastingTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.FastingTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (LengthOfStay != null)
                 {
-                    query += " AND LengthOfStay = " + LengthOfStay + "";
+                    query += " AND PA.LengthOfStay = " + LengthOfStay + "";
                 }
                 if (PreviousBed != null)
                 {
-                    query += " AND PreviousBed = '" + PreviousBed + "'";
+                    query += " AND PA.PreviousBed = '" + PreviousBed + "'";
                 }
                 if (MovedToBed != null)
                 {
-                    query += " AND MovedToBed = '" + MovedToBed + "'";
+                    query += " AND PA.MovedToBed = '" + MovedToBed + "'";
                 }
                 if (DoNotOrderFrom != null)
                 {
                     DateTime Date = DateTime.Parse(DoNotOrderFrom);
-                    query += " AND DoNotOrderFrom >= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.DoNotOrderFrom >= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (DoNotOrderTo != null)
                 {
                     DateTime Date = DateTime.Parse(DoNotOrderTo);
-                    query += " AND DoNotOrderTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.DoNotOrderTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (AdmitDate != null)
                 {
                     DateTime Date = DateTime.Parse(AdmitDate);
-                    query += " AND AdmitDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.AdmitDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (DischargeDate != null)
                 {
                     DateTime Date = DateTime.Parse(DischargeDate);
-                    query += " AND DischargeDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.DischargeDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (IsActive != null)
                 {
-                    query += " AND IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    query += " AND PA.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 if (CreatedFrom != null)
                 {
                     DateTime Date = DateTime.Parse(CreatedFrom);
-                    query += " AND CreatedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.CreatedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (CreatedTo != null)
                 {
                     DateTime Date = DateTime.Parse(CreatedTo);
-                    query += " AND CreatedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.CreatedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (ModifiedFrom != null)
                 {
                     DateTime Date = DateTime.Parse(ModifiedFrom);
-                    query += " AND ModifiedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.ModifiedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (ModifiedTo != null)
                 {
                     DateTime Date = DateTime.Parse(ModifiedTo);
-                    query += " AND ModifiedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    query += " AND PA.ModifiedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
                 {
                     _OrderBy = "DESC";
                 }
+
                 query += " ORDER BY PatientID " + _OrderBy + "";
                 command.CommandText = query;
                 DataTable Data = new DataTable("Patients");

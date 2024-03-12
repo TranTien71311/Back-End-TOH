@@ -6,11 +6,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Util;
 
 namespace SpeedTOHAPI.Controllers
 {
@@ -91,7 +95,7 @@ namespace SpeedTOHAPI.Controllers
                     foreach (var product in Products)
                     {
                         rowIndex++;
-                        if (product.ProductID == null)
+                        if (product.ProductNum == null)
                         {
                             result.Status = 602;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -114,27 +118,38 @@ namespace SpeedTOHAPI.Controllers
                             //UPDATE
                             try
                             {
-                                string query = "UPDATE DBA.POSProducts SET ModifiedDate= ? ";
+                                string query = "UPDATE DBA.POSProducts SET DateModified= ? ";
                                 if(product.IsPublic != null)
                                 {
-                                    query += ", IsPublic=" + product.IsPublic + "";
+                                    query += ", IsPublic='" + Convert.ToInt32(product.IsPublic) + "'";
                                 }
-                                if (product.Image != null)
+                                if (product.Image != null && product.Image != "")
                                 {
-                                    query += ", Image=" + product.Image + "";
+                                    string img = SaveImage(product.Image, product.ProductNum.ToString());
+                                    Random rnd = new Random();
+                                    Products[0].Image = img + "?" + rnd.Next();
+                                    query += ", Image = '" + img + "'";
                                 }
                                 if (product.Index != null)
                                 {
-                                    query += ", Index=" + product.Index + "";
+                                    query += @", ""Index"" = '" + product.Index + "'";
+                                }
+                                if (product.TimeStartOrder != null)
+                                {
+                                    query += @", TimeStartOrder = '" + product.TimeStartOrder + "'";
+                                }
+                                if (product.TimeEndOrder != null)
+                                {
+                                    query += @", TimeEndOrder = '" + product.TimeEndOrder + "'";
                                 }
                                 query += " WHERE ProductNum='" + product.ProductNum + "'";
 
                                 command.CommandText = query;
                                 command.Parameters.Clear();
-                                command.Parameters.AddWithValue("ModifiedDate", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
+                                command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                 command.ExecuteNonQuery();
 
-                                if (product.Translations.Count() > 0)
+                                if (product.Translations != null && product.Translations.Count() > 0)
                                 {
                                     foreach(var translation  in product.Translations)
                                     {
@@ -163,18 +178,18 @@ namespace SpeedTOHAPI.Controllers
                                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                                             continue;
                                         }
-                                        command.CommandText = @"SELECT ISNULL(TranslationPOSProductID, -1)
+                                        command.CommandText = @"SELECT COUNT(TranslationPOSProductID)
                                         FROM dba.TranslationPOSProducts
                                         WHERE TranslationID = '" + translation.TranslationID + @"' AND ProductNum = '"+ product.ProductNum +"'";
-                                        int TranslationPOSProductID = (int)command.ExecuteScalar();
-                                        if(TranslationPOSProductID == -1)
+                                        int CountTranslation = (int)command.ExecuteScalar();
+                                        if(CountTranslation == 0)
                                         {
                                             //Insert
                                             command.CommandText = @"INSERT INTO DBA.TranslationPOSProducts (TranslationID, ProductNum, TranslationType, TranslationText)
                                                                     VALUES (?,?,?,?)";
                                             command.Parameters.Clear();
                                             command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
-                                            command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(translation.ProductNum));
+                                            command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
                                             command.ExecuteNonQuery();
@@ -182,14 +197,13 @@ namespace SpeedTOHAPI.Controllers
                                         else
                                         {
                                             //Update
-                                            command.CommandText = @"UPDATE DBA.TranslationPOSProducts SET TranslationID = ?, ProductNum = ?, TranslationType = ?, TranslationText = ?
-                                                                    WHERE TranslationPOSProductID = ?";
+                                            command.CommandText = @"UPDATE DBA.TranslationPOSProducts SET  TranslationType = ?, TranslationText = ?
+                                                                    WHERE TranslationID = ? AND ProductNum = ?";
                                             command.Parameters.Clear();
-                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
-                                            command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(translation.ProductNum));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
-                                            command.Parameters.AddWithValue("TranslationPOSProductID", Convert.ToInt32(TranslationPOSProductID));
+                                            command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
+                                            command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
                                             command.ExecuteNonQuery();
                                         }
                                     }
@@ -271,7 +285,6 @@ namespace SpeedTOHAPI.Controllers
                     return result;
                 }
                 string Token = Request.Headers.GetValues("Token").First();
-                string Token1 = Request.RequestUri.PathAndQuery;
                 if (!Globals.HMACSHA256(Request.RequestUri.PathAndQuery, System.Configuration.ConfigurationManager.AppSettings["SecretKey"].ToString()).Equals(Token))
                 {
                     result.Status = 202;
@@ -336,16 +349,23 @@ namespace SpeedTOHAPI.Controllers
                                     p.Tax3 AS 'Tax3',
                                     p.Tax4 AS 'Tax4',
                                     p.Tax5 AS 'Tax5',
+                                    p.Question1 AS 'Question1',
+                                    p.Question2 AS 'Question2',
+                                    p.Question3 AS 'Question3',
+                                    p.Question4 AS 'Question4',
+                                    p.Question5 AS 'Question5',
                                     p.ProductType AS 'ProductType',
                                     p.SizeUp AS 'SizeUp',
                                     p.SizeDown AS 'SizeDown',
                                     p.LabelCapacity AS 'LabelCapacity',
                                     p.IsPublic AS 'IsPublic',
-                                    p.Index AS 'Index',
+                                    ""Index"" AS 'Index',
                                     p.Image AS 'Image',
                                     p.DateCreated AS 'DateCreated',
                                     p.DateModified AS 'DateModified',
                                     p.IsActive AS 'IsActive',
+                                    p.TimeStartOrder AS 'TimeStartOrder',
+                                    p.TimeEndOrder AS 'TimeEndOrder'
                                     FROM DBA.POSProducts p
                                     WHERE ProductNum <> 0";
 
@@ -376,8 +396,8 @@ namespace SpeedTOHAPI.Controllers
                 }
                 if (IsActive != null)
                 {
-                    query += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
-                    queryin += " AND d.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    query += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    queryin += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
@@ -390,7 +410,7 @@ namespace SpeedTOHAPI.Controllers
                 Data.Load(command.ExecuteReader());
                 List<POSProductModel> Products = JsonConvert.DeserializeObject<List<POSProductModel>>(JsonConvert.SerializeObject(Data));
 
-                string queryTranlation = "SELECT * FROM DBA.TranlationPOSProducts WHERE ProductNum IN (" + queryin + ")";
+                string queryTranlation = "SELECT * FROM DBA.TranslationPOSProducts WHERE ProductNum IN (" + queryin + ")";
                 command.CommandText = queryTranlation;
                 DataTable DataTranlations = new DataTable("Tranlations");
                 DataTranlations.Load(command.ExecuteReader());
@@ -418,6 +438,11 @@ namespace SpeedTOHAPI.Controllers
                                     Tax3 = data.Tax3,
                                     Tax4 = data.Tax4,
                                     Tax5 = data.Tax5,
+                                    Question1 = data.Question1,
+                                    Question2 = data.Question2,
+                                    Question3 = data.Question3,
+                                    Question4 = data.Question4,
+                                    Question5 = data.Question5,
                                     ProductType = data.ProductType,
                                     SizeUp = data.SizeUp,
                                     SizeDown = data.SizeDown,
@@ -428,9 +453,12 @@ namespace SpeedTOHAPI.Controllers
                                     DateCreated = data.DateCreated,
                                     DateModified = data.DateModified,
                                     IsActive = data.IsActive,
+                                    TimeStartOrder = data.TimeStartOrder,
+                                    TimeEndOrder = data.TimeEndOrder,
                                     Tranlations = Tranlations.Where(x=>x.ProductNum  == data.ProductNum).ToList(),
                                 }).ToList();
 
+                result.TotalPages = 1;
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = JoinData;
@@ -446,6 +474,28 @@ namespace SpeedTOHAPI.Controllers
                 conPixelSqlbase.Close();
             }
             return result;
-        } 
+        }
+
+        public string SaveImage(string ImgStr, string ImgName)
+        {
+            String path = HttpContext.Current.Server.MapPath("~/Images/Products"); //Path
+
+            //Check if directory exist
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path); //Create directory if it doesn't exist
+            }
+
+            string imageName = ImgName + ".jpg";
+
+            //set the image path
+            string imgPath = Path.Combine(path, imageName);
+
+            byte[] imageBytes = Convert.FromBase64String(ImgStr);
+
+            File.WriteAllBytes(imgPath, imageBytes);
+            string imageUrl = "/Images/Products/" + imageName;
+            return imageUrl;
+        }
     }
 }

@@ -121,7 +121,7 @@ namespace SpeedTOHAPI.Models
                         }
                         command.CommandText = @"INSERT INTO dba.Pantrys
                                             ( PantryCode, PantryName)
-                                            VALUES(?,?,?)";
+                                            VALUES(?,?)";
                         command.Parameters.Clear();
                         command.Parameters.AddWithValue("PantryCode", Pantry.PantryCode.ToString());
                         command.Parameters.AddWithValue("PantryName", Pantry.PantryName.ToString());
@@ -255,7 +255,7 @@ namespace SpeedTOHAPI.Models
 
                         if (CountWard == 0)
                         {
-                            result.Status = 1106;
+                            result.Status = 1105;
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
@@ -425,11 +425,31 @@ namespace SpeedTOHAPI.Models
                 {
                     _OrderBy = "DESC";
                 }
-                query += " ORDER BY WardID " + _OrderBy + "";
+                query += " ORDER BY PantryID " + _OrderBy + "";
                 command.CommandText = query;
-                DataTable Data = new DataTable("Patients");
+                DataTable Data = new DataTable("Data");
                 Data.Load(command.ExecuteReader());
 
+                command.CommandText = @"SELECT COUNT(PantryID)
+                                        FROM dba.Pantrys
+                                        WHERE IsActive = 1";
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
+
+                result.TotalPages = TotalPages;
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = Data;

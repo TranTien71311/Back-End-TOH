@@ -67,13 +67,7 @@ namespace SpeedTOHAPI.Controllers
                     result.Message = msg != null ? msg.Message : "";
                     return result;
                 }
-                if (Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["MaxLengthAPI"]) < Products.Count())
-                {
-                    result.Status = 208;
-                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                    result.Message = msg != null ? msg.Message : "";
-                    return result;
-                }
+
                 int rowIndex = 0;
                 List<ErrorModel> Errors = new List<ErrorModel>();
 
@@ -99,19 +93,19 @@ namespace SpeedTOHAPI.Controllers
                         }
                         else
                         {
-                            command.CommandText = @"SELECT ISNULL(ProductNum, -1)
+                            command.CommandText = @"SELECT COUNT(ProductNum)
                                         FROM dba.POSProducts
                                         WHERE ProductNum = '" + product.ProductNum + @"'";
-                            int ProductNum = (int)command.ExecuteScalar();
-                            if(ProductNum != -1)
+                            int CountProductNum = (int)command.ExecuteScalar();
+                            if(CountProductNum > 0)
                             {
-                                //UPDATE
                                 try 
                                 {
                                     command.CommandText = @"UPDATE dba.POSProducts
                                                 SET ProductName = ?, ReportNo = ?,
                                                 PriceA = ?,PriceB = ?,PriceC = ?,PriceD = ?,PriceE = ?,PriceF = ?,PriceG = ?,PriceH = ?,PriceI = ?,PriceJ = ?,
                                                 Tax1 = ?,Tax2 = ?,Tax3 = ?,Tax4 = ?,Tax5 = ?,
+                                                Question1 = ?,Question2 = ?,Question3 = ?,Question4 = ?,Question5 = ?,
                                                 ProductType= ?,SizeUp = ?,SizeDown = ?,LabelCapacity = ?, IsActive = ?, DateModified = ?
                                                 WHERE ProductNum = ?";
                                     command.Parameters.Clear();
@@ -132,11 +126,23 @@ namespace SpeedTOHAPI.Controllers
                                     command.Parameters.AddWithValue("Tax3", Convert.ToBoolean(product.Tax3));
                                     command.Parameters.AddWithValue("Tax4", Convert.ToBoolean(product.Tax4));
                                     command.Parameters.AddWithValue("Tax5", Convert.ToBoolean(product.Tax5));
+                                    command.Parameters.AddWithValue("Question1", Convert.ToInt32(product.Question1));
+                                    command.Parameters.AddWithValue("Question2", Convert.ToInt32(product.Question2));
+                                    command.Parameters.AddWithValue("Question3", Convert.ToInt32(product.Question3));
+                                    command.Parameters.AddWithValue("Question4", Convert.ToInt32(product.Question4));
+                                    command.Parameters.AddWithValue("Question5", Convert.ToInt32(product.Question5));
                                     command.Parameters.AddWithValue("ProductType", Convert.ToInt32(product.ProductType));
                                     command.Parameters.AddWithValue("SizeUp", Convert.ToBoolean(product.SizeUp));
                                     command.Parameters.AddWithValue("SizeDown", Convert.ToBoolean(product.SizeDown));
-                                    command.Parameters.AddWithValue("LabelCapacity", product.LabelCapacity.ToString());
-                                    command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(ProductNum));
+                                    if (product.LabelCapacity != null)
+                                    {
+                                        command.Parameters.AddWithValue("LabelCapacity", product.LabelCapacity.ToString());
+                                    }
+                                    else
+                                    {
+                                        command.Parameters.AddWithValue("LabelCapacity", DBNull.Value);
+                                    }
+                                    command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(product.IsActive));
                                     command.Parameters.AddWithValue("DateModified", Convert.ToDateTime((DateTime.Now).ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture)));
                                     command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
 
@@ -156,8 +162,9 @@ namespace SpeedTOHAPI.Controllers
                                                 (ProductNum, ProductName, ReportNo,
                                                 PriceA,PriceB,PriceC,PriceD,PriceE,PriceF,PriceG,PriceH,PriceI,PriceJ,
                                                 Tax1,Tax2,Tax3,Tax4,Tax5,
+                                                Question1,Question2,Question3,Question4,Question5,
                                                 ProductType,SizeUp,SizeDown,LabelCapacity,IsActive)
-                                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,??,?,?,?,?,?,?,?)";
+                                                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                             command.Parameters.Clear();
                             command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
                             command.Parameters.AddWithValue("ProductName", product.ProductName.ToString());
@@ -177,10 +184,22 @@ namespace SpeedTOHAPI.Controllers
                             command.Parameters.AddWithValue("Tax3", Convert.ToBoolean(product.Tax3));
                             command.Parameters.AddWithValue("Tax4", Convert.ToBoolean(product.Tax4));
                             command.Parameters.AddWithValue("Tax5", Convert.ToBoolean(product.Tax5));
+                            command.Parameters.AddWithValue("Question1", Convert.ToInt32(product.Question1));
+                            command.Parameters.AddWithValue("Question2", Convert.ToInt32(product.Question2));
+                            command.Parameters.AddWithValue("Question3", Convert.ToInt32(product.Question3));
+                            command.Parameters.AddWithValue("Question4", Convert.ToInt32(product.Question4));
+                            command.Parameters.AddWithValue("Question5", Convert.ToInt32(product.Question5));
                             command.Parameters.AddWithValue("ProductType", Convert.ToInt32(product.ProductType));
                             command.Parameters.AddWithValue("SizeUp", Convert.ToBoolean(product.SizeUp));
                             command.Parameters.AddWithValue("SizeDown", Convert.ToBoolean(product.SizeDown));
-                            command.Parameters.AddWithValue("LabelCapacity", product.LabelCapacity.ToString());
+                            if (product.LabelCapacity != null)
+                            {
+                                command.Parameters.AddWithValue("LabelCapacity", product.LabelCapacity.ToString());
+                            }
+                            else
+                            {
+                                command.Parameters.AddWithValue("LabelCapacity", DBNull.Value);
+                            }
                             command.Parameters.AddWithValue("IsActive", Convert.ToBoolean(product.IsActive));
                             command.ExecuteNonQuery();
                         }
@@ -190,6 +209,8 @@ namespace SpeedTOHAPI.Controllers
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
                         }
+
+
                         
                     }
                     if (Errors.Count > 0)
