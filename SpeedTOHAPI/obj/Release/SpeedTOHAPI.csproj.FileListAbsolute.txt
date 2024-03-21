@@ -74,3 +74,6 @@ C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Memory.xml
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Threading.Tasks.Extensions.xml
 C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\System.Web.Http.Cors.xml
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\JWT.dll
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\JWT.pdb
+C:\Users\ASUS\OneDrive\Máy tính\Back-End-TOH\SpeedTOHAPI\bin\JWT.xml
