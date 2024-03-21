@@ -269,7 +269,7 @@ namespace SpeedTOHAPI.Controllers
                         
                         if (food.IsActive != null)
                         {
-                            query += ", IsActive='" + food.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(food.IsActive) + "'";
                         }
                         query += " WHERE FoodCode='" + food.FoodCode + "'";
 

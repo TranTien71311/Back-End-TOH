@@ -15,5 +15,6 @@ namespace SpeedTOHAPI.Models
         public bool? IsActive {  get; set; }
         public DateTime? DateCreated {  get; set; }
         public DateTime? DateModified {  get; set; }
+        public string Descript { get; set; }
     }
 }

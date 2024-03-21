@@ -168,54 +168,54 @@ namespace SpeedTOHAPI.Controllers
                             Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
                             continue;
                         }
-                        if (dietary.KitchenCode != null)
-                        {
-                            command.CommandText = @"SELECT COUNT(KitchenID)
-                                        FROM dba.Kitchens
-                                        WHERE KitchenCode = '" + dietary.KitchenCode + @"'
-                                        AND IsActive = 1";
-                            int CountKitchen = (int)command.ExecuteScalar(); 
+                        //if (dietary.KitchenCode != null)
+                        //{
+                        //    command.CommandText = @"SELECT COUNT(KitchenID)
+                        //                FROM dba.Kitchens
+                        //                WHERE KitchenCode = '" + dietary.KitchenCode + @"'
+                        //                AND IsActive = 1";
+                        //    int CountKitchen = (int)command.ExecuteScalar(); 
                             
-                            if(CountKitchen == 0)
-                            {
-                                result.Status = 511;
-                                var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                                Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
-                                continue;
-                            }
-                        }
-                        if (dietary.PantryCode != null)
-                        {
-                            command.CommandText = @"SELECT COUNT(PantryID)
-                                        FROM dba.Pantrys
-                                        WHERE PantryCode = '" + dietary.PantryCode + @"'
-                                        AND IsActive = 1";
-                            int CountPantry = (int)command.ExecuteScalar();
+                        //    if(CountKitchen == 0)
+                        //    {
+                        //        result.Status = 511;
+                        //        var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        //        Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                        //        continue;
+                        //    }
+                        //}
+                        //if (dietary.PantryCode != null)
+                        //{
+                        //    command.CommandText = @"SELECT COUNT(PantryID)
+                        //                FROM dba.Pantrys
+                        //                WHERE PantryCode = '" + dietary.PantryCode + @"'
+                        //                AND IsActive = 1";
+                        //    int CountPantry = (int)command.ExecuteScalar();
 
-                            if (CountPantry == 0)
-                            {
-                                result.Status = 512;
-                                var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                                Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
-                                continue;
-                            }
-                        }
-                        if (dietary.SnackCode != null)
-                        {
-                            command.CommandText = @"SELECT COUNT(SnackID)
-                                        FROM dba.Snacks
-                                        WHERE SnackCode = '" + dietary.SnackCode + @"'
-                                        AND IsActive = 1";
-                            int CountSnack = (int)command.ExecuteScalar();
+                        //    if (CountPantry == 0)
+                        //    {
+                        //        result.Status = 512;
+                        //        var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        //        Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                        //        continue;
+                        //    }
+                        //}
+                        //if (dietary.SnackCode != null)
+                        //{
+                        //    command.CommandText = @"SELECT COUNT(SnackID)
+                        //                FROM dba.Snacks
+                        //                WHERE SnackCode = '" + dietary.SnackCode + @"'
+                        //                AND IsActive = 1";
+                        //    int CountSnack = (int)command.ExecuteScalar();
 
-                            if (CountSnack == 0)
-                            {
-                                result.Status = 513;
-                                var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                                Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
-                                continue;
-                            }
-                        }
+                        //    if (CountSnack == 0)
+                        //    {
+                        //        result.Status = 513;
+                        //        var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        //        Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                        //        continue;
+                        //    }
+                        //}
 
                         command.CommandText = @"SELECT isnull(MAX(DietaryID),0)
                                         FROM dba.DietaryProperties";
@@ -262,32 +262,32 @@ namespace SpeedTOHAPI.Controllers
                             command.ExecuteNonQuery();
                         }
 
-                        if(dietary.FoodAllergies != null)
-                        {
-                            //Insert FoodAllergies
-                            foreach (var foodcode in dietary.FoodAllergies)
-                            {
-                                command.CommandText = @"SELECT COUNT(FoodID)
-                                        FROM dba.Foods
-                                        WHERE FoodCode = '" + foodcode + @"'
-                                        AND IsActive = 1";
-                                int CountFoodCode = (int)command.ExecuteScalar();
-                                if (CountFoodCode == 0)
-                                {
-                                    result.Status = 509;
-                                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
-                                    Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
-                                    continue;
-                                }
+                        //if(dietary.FoodAllergies != null)
+                        //{
+                        //    //Insert FoodAllergies
+                        //    foreach (var foodcode in dietary.FoodAllergies)
+                        //    {
+                        //        command.CommandText = @"SELECT COUNT(FoodID)
+                        //                FROM dba.Foods
+                        //                WHERE FoodCode = '" + foodcode + @"'
+                        //                AND IsActive = 1";
+                        //        int CountFoodCode = (int)command.ExecuteScalar();
+                        //        if (CountFoodCode == 0)
+                        //        {
+                        //            result.Status = 509;
+                        //            var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        //            Errors.Add(new ErrorModel { row = rowIndex, Message = msg });
+                        //            continue;
+                        //        }
 
-                                command.CommandText = @"INSERT INTO dba.FoodAllergies(PatientID,FoodCode)
-                                                VALUES(?,?)";
-                                command.Parameters.Clear();
-                                command.Parameters.AddWithValue("PatientID", PatientID);
-                                command.Parameters.AddWithValue("FoodCode", foodcode.ToString());
-                                command.ExecuteNonQuery();
-                            }
-                        }
+                        //        command.CommandText = @"INSERT INTO dba.FoodAllergies(PatientID,FoodCode)
+                        //                        VALUES(?,?)";
+                        //        command.Parameters.Clear();
+                        //        command.Parameters.AddWithValue("PatientID", PatientID);
+                        //        command.Parameters.AddWithValue("FoodCode", foodcode.ToString());
+                        //        command.ExecuteNonQuery();
+                        //    }
+                        //}
                         
                     }
                     if (Errors.Count > 0)
@@ -509,7 +509,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         if (dietary.IsActive != null)
                         {
-                            query += ", IsActive=" + dietary.IsActive + "";
+                            query += ", IsActive=" + Convert.ToInt32(dietary.IsActive) + "";
                         }
                         query += " WHERE VisitCode='" + dietary.VisitCode + "' AND HN='" + dietary.HN + "'";
 

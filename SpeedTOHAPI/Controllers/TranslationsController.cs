@@ -328,7 +328,8 @@ namespace SpeedTOHAPI.Controllers
                                     T.Image,
                                     T.IsActive,
                                     T.CreatedDate,
-                                    T.ModifiedDate
+                                    T.ModifiedDate,
+                                    T.TranslationCode
                                     FROM DBA.Translations T
                                     WHERE T.TranslationID is not null";
                 if (TranslationID != null)

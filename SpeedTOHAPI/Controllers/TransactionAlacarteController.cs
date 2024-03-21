@@ -61,7 +61,6 @@ namespace SpeedTOHAPI.Controllers
                 }
 
                 TransactionAlacarteModel Transaction = JsonConvert.DeserializeObject<TransactionAlacarteModel>(body);
-                int rowIndex = 0;
                 List<ErrorModel> Errors = new List<ErrorModel>();
 
                 OdbcCommand command = new OdbcCommand();
@@ -195,6 +194,7 @@ namespace SpeedTOHAPI.Controllers
                                     F.ModifiedDate
                                     FROM DBA.TransactionAlacartes F
                                     WHERE F.TransactionID <> 0";
+
 
                 if (TransactionCode != null)
                 {

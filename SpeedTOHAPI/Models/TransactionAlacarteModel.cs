@@ -17,5 +17,6 @@ namespace SpeedTOHAPI.Models
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public bool? IsActive { get; set; }
+        public int? PaymentID { get; set; }
     }
 }

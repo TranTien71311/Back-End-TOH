@@ -11,6 +11,7 @@ namespace SpeedTOHAPI.Models
         public string TranslationName { get; set; }
         public bool? IsActive {  get; set; }
         public string Image {  get; set; }
+        public string TranslationCode { get; set; }
         public DateTime? DataCreated { get; set; }
         public DateTime? DateModified {  get; set; }
     }

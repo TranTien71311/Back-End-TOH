@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using JWT.Algorithms;
+using JWT.Exceptions;
+using JWT.Serializers;
+using JWT;
+using Newtonsoft.Json;
 using SpeedTOHAPI.Codes;
 using SpeedTOHAPI.Models;
 using System;
@@ -19,9 +23,11 @@ namespace SpeedTOHAPI.Controllers
     {
         [HttpPost]
         public APIResult Post([NakedBody] string body)
+        
         {
             APIResult result = new APIResult();
             OdbcConnection conPixelSqlbase = new OdbcConnection();
+
             try
             {
                 if (!Request.Headers.Contains("PartnerKey"))
@@ -59,8 +65,36 @@ namespace SpeedTOHAPI.Controllers
                     result.Message = msg != null ? msg.Message : "";
                     return result;
                 }
-
                 LoginModal Login = JsonConvert.DeserializeObject<LoginModal>(body);
+                LoginModal Account = new LoginModal();
+                try
+                {
+                    IJsonSerializer serializer = new JsonNetSerializer();
+                    var provider = new UtcDateTimeProvider();
+                    IJwtValidator validator = new JwtValidator(serializer, provider);
+                    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+                    IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+                    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
+
+                    var json = decoder.Decode(Login.AccessToken, System.Configuration.ConfigurationManager.AppSettings["SecretKey"].ToString(), verify: true);
+                    Account = JsonConvert.DeserializeObject<LoginModal>(json);
+                }
+                
+                catch (TokenExpiredException)
+                {
+                    result.Status = 1408;
+                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                    result.Message = msg != null ? msg.Message : "";
+                    return result;
+                }
+                catch (SignatureVerificationException)
+                {
+                    result.Status = 1409;
+                    var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                    result.Message = msg != null ? msg.Message : "";
+                    return result;
+                }
+                
 
                 OdbcCommand command = new OdbcCommand();
                 conPixelSqlbase.Open();
@@ -72,7 +106,7 @@ namespace SpeedTOHAPI.Controllers
                     odbcTransact = conPixelSqlbase.BeginTransaction();
                     command.Transaction = odbcTransact;
 
-                    if (Login.TypeLogin == null)
+                    if (Account.TypeLogin == null)
                     {
                         result.Status = 1401;
                         var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -81,16 +115,16 @@ namespace SpeedTOHAPI.Controllers
                     }
                     else
                     {
-                        if(Login.TypeLogin == 0)
+                        if(Account.TypeLogin == 0)
                         {
-                            if(Login.UserName == null)
+                            if (Account.UserName == null)
                             {
                                 result.Status = 1402;
                                 var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                                 result.Message = msg1 != null ? msg1.Message : "";
                                 return result;
                             }
-                            if (Login.Password == null)
+                            if (Account.Password == null)
                             {
                                 result.Status = 1403;
                                 var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -101,7 +135,7 @@ namespace SpeedTOHAPI.Controllers
                             command.CommandText = @"SELECT u.UserID, u.UserName, u.Email, u.EmployeeCode, ug.UserGroupName, ug.UserGroupID, ug.AccessAllPermission, u.FullName
                                                     FROM DBA.Users u 
                                                     LEFT JOIN DBA.UserGroups ug ON u.UserGroupID = ug.UserGroupID
-                                                    WHERE UserName='" + Login.UserName +"' AND Password='"+ Login.Password +"' AND u.IsActive=1";
+                                                    WHERE UserName='" + Account.UserName +"' AND Password='"+ Account.Password +"' AND u.IsActive=1";
                             DataTable DataUser = new DataTable("User");
                             DataUser.Load(command.ExecuteReader());
                             if(DataUser.Rows.Count == 0)
@@ -149,16 +183,16 @@ namespace SpeedTOHAPI.Controllers
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             result.Message = msg != null ? msg.Message : "";
                         }
-                        if (Login.TypeLogin == 1)
+                        if (Account.TypeLogin == 1)
                         {
-                            if (Login.Email == null)
+                            if (Account.Email == null)
                             {
                                 result.Status = 1404;
                                 var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                                 result.Message = msg1 != null ? msg1.Message : "";
                                 return result;
                             }
-                            if (Login.Password == null)
+                            if (Account.Password == null)
                             {
                                 result.Status = 1403;
                                 var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -169,7 +203,7 @@ namespace SpeedTOHAPI.Controllers
                             command.CommandText = @"SELECT u.UserID, u.UserName, u.Email, u.EmployeeCode, ug.UserGroupName, ug.UserGroupID, ug.AccessAllPermission, u.FullName
                                                     FROM DBA.Users u 
                                                     LEFT JOIN DBA.UserGroups ug ON u.UserGroupID = ug.UserGroupID
-                                                    WHERE Email='" + Login.Email + "' AND Password='" + Login.Password + "' AND u.IsActive=1";
+                                                    WHERE Email='" + Account.Email + "' AND Password='" + Account.Password + "' AND u.IsActive=1";
                             DataTable DataUser = new DataTable("User");
                             DataUser.Load(command.ExecuteReader());
                             if (DataUser.Rows.Count == 0)
@@ -217,9 +251,9 @@ namespace SpeedTOHAPI.Controllers
                             var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
                             result.Message = msg != null ? msg.Message : "";
                         }
-                        if (Login.TypeLogin == 2)
+                        if (Account.TypeLogin == 2)
                         {
-                            if (Login.EmployeeCode == null)
+                            if (Account.EmployeeCode == null)
                             {
                                 result.Status = 1405;
                                 var msg1 = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
@@ -230,7 +264,7 @@ namespace SpeedTOHAPI.Controllers
                             command.CommandText = @"SELECT u.UserID, u.UserName, u.Email, u.EmployeeCode, ug.UserGroupName, ug.UserGroupID, ug.AccessAllPermission, u.FullName
                                                     FROM DBA.Users u 
                                                     LEFT JOIN DBA.UserGroups ug ON u.UserGroupID = ug.UserGroupID
-                                                    WHERE EmployeeCode='" + Login.EmployeeCode + "' AND u.IsActive=1";
+                                                    WHERE EmployeeCode='" + Account.EmployeeCode + "' AND u.IsActive=1";
                             DataTable DataUser = new DataTable("User");
                             DataUser.Load(command.ExecuteReader());
                             if (DataUser.Rows.Count == 0)

@@ -269,7 +269,7 @@ namespace SpeedTOHAPI.Controllers
 
                         if (Kitchen.IsActive != null)
                         {
-                            query += ", IsActive='" + Kitchen.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(Kitchen.IsActive) + "'";
                         }
                         query += " WHERE KitchenCode='" + Kitchen.KitchenCode + "'";
 

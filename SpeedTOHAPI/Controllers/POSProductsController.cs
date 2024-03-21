@@ -185,23 +185,25 @@ namespace SpeedTOHAPI.Controllers
                                         if(CountTranslation == 0)
                                         {
                                             //Insert
-                                            command.CommandText = @"INSERT INTO DBA.TranslationPOSProducts (TranslationID, ProductNum, TranslationType, TranslationText)
-                                                                    VALUES (?,?,?,?)";
+                                            command.CommandText = @"INSERT INTO DBA.TranslationPOSProducts (TranslationID, ProductNum, TranslationType, TranslationText, Descript)
+                                                                    VALUES (?,?,?,?,?)";
                                             command.Parameters.Clear();
                                             command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
                                             command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
+                                            command.Parameters.AddWithValue("Descript", translation.Descript.ToString());
                                             command.ExecuteNonQuery();
                                         }
                                         else
                                         {
                                             //Update
-                                            command.CommandText = @"UPDATE DBA.TranslationPOSProducts SET  TranslationType = ?, TranslationText = ?
+                                            command.CommandText = @"UPDATE DBA.TranslationPOSProducts SET  TranslationType = ?, TranslationText = ?, Descript = ?
                                                                     WHERE TranslationID = ? AND ProductNum = ?";
                                             command.Parameters.Clear();
                                             command.Parameters.AddWithValue("TranslationType", Convert.ToInt32(translation.TranslationType));
                                             command.Parameters.AddWithValue("TranslationText", translation.TranslationText.ToString());
+                                            command.Parameters.AddWithValue("Descript", translation.Descript.ToString());
                                             command.Parameters.AddWithValue("TranslationID", Convert.ToInt32(translation.TranslationID));
                                             command.Parameters.AddWithValue("ProductNum", Convert.ToInt32(product.ProductNum));
                                             command.ExecuteNonQuery();
@@ -369,35 +371,45 @@ namespace SpeedTOHAPI.Controllers
                                     FROM DBA.POSProducts p
                                     WHERE ProductNum <> 0";
 
+                string queryCount = @"SELECT COUNT(ProductNum)
+                                        FROM dba.POSProducts p
+                                        WHERE ProductNum <> 0";
+
                 if (ProductNum != null)
                 {
                     query += " AND p.ProductNum = " + Convert.ToInt32(ProductNum) + "";
                     queryin += " AND p.ProductNum = " + Convert.ToInt32(ProductNum) + "";
+                    queryCount += " AND p.ProductNum = " + Convert.ToInt32(ProductNum) + "";
                 }
                 if (ProductID != null)
                 {
                     query += " AND p.ProductID = '" + ProductID + "'";
                     queryin += " AND p.ProductID = '" + ProductID + "'";
+                    queryCount += " AND p.ProductID = '" + ProductID + "'";
                 }
                 if (ReportNo != null)
                 {
                     query += " AND p.ReportNo = '" + ReportNo + "'";
                     queryin += " AND p.ReportNo = '" + ReportNo + "'";
+                    queryCount += " AND p.ReportNo = '" + ReportNo + "'";
                 }
                 if (ProductType != null)
                 {
                     query += " AND p.ProductType = '" + ProductType + "'";
                     queryin += " AND p.ProductType = '" + ProductType + "'";
+                    queryCount += " AND p.ProductType = '" + ProductType + "'";
                 }
                 if (IsPublic != null)
                 {
                     query += " AND p.IsPublic = '" + (IsPublic == true ? 1 : 0) + "'";
                     queryin += " AND p.IsPublic = '" + (IsPublic == true ? 1 : 0) + "'";
+                    queryCount += " AND p.IsPublic = '" + (IsPublic == true ? 1 : 0) + "'";
                 }
                 if (IsActive != null)
                 {
                     query += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
                     queryin += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    queryCount += " AND p.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
@@ -458,7 +470,24 @@ namespace SpeedTOHAPI.Controllers
                                     Tranlations = Tranlations.Where(x=>x.ProductNum  == data.ProductNum).ToList(),
                                 }).ToList();
 
-                result.TotalPages = 1;
+                command.CommandText = queryCount;
+                int TotalRow = (int)command.ExecuteScalar();
+
+                int Count = TotalRow != 0 ? TotalRow : 1;
+                int TotalPages = 1;
+                if (Count > _PageSize)
+                {
+                    if (Count % _PageSize == 0)
+                    {
+                        TotalPages = Count / _PageSize;
+                    }
+                    else
+                    {
+                        TotalPages = (int)(Count / _PageSize) + 1;
+                    }
+                }
+
+                result.TotalPages = TotalPages;
                 result.Status = 200;
                 result.Message = "OK";
                 result.Data = JoinData;

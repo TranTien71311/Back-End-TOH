@@ -4,6 +4,7 @@ using SpeedTOHAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.Odbc;
 using System.IO;
 using System.Linq;
@@ -72,6 +73,44 @@ namespace SpeedTOHAPI.Controllers
                 OrderAlacarteModel OrderAlacarte = JsonConvert.DeserializeObject<OrderAlacarteModel>(body);
                 if(OrderAlacarte != null)
                 {
+                    string query = @"SELECT TOP 1 *
+                                 FROM DBA.POSSettings";
+                    command.CommandText = query;
+                    DataTable Data = new DataTable("POSSetting");
+                    Data.Load(command.ExecuteReader());
+                    POSConfigModel Config = JsonConvert.DeserializeObject<POSConfigModel>(JsonConvert.SerializeObject(Data));
+
+                    if(Config == null)
+                    {
+                        result.Status = 1601;
+                        var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        result.Message = msg != null ? msg.Message : "";
+                        return result;
+                    } 
+                    else
+                    {
+                        OrderAlacarte.POSHeader.SALETYPEINDEX = (int)Config.SaleType;
+                        OrderAlacarte.POSHeader.STATNUM = (int)Config.StationNum;
+                        OrderAlacarte.POSHeader.RevCenter = (int)Config.RevCenter;
+                        OrderAlacarte.POSHeader.SecNum = (int)Config.SectionNum;
+                        OrderAlacarte.POSHeader.TABLENUM = (int)Config.TableNum;
+                        OrderAlacarte.POSHeader.MemCode = (int)Config.MemberCode;
+                    }
+
+                    command.CommandText = @"SELECT TOP 1 *
+                                            FROM DBA.Payments
+                                            WHERE PaymentID = " + OrderAlacarte.Transaction.PaymentID + "";
+                    DataTable Payments = new DataTable("Payment");
+                    Payments.Load(command.ExecuteReader());
+                    PaymentModel Payment = JsonConvert.DeserializeObject<PaymentModel>(JsonConvert.SerializeObject(Payments));
+
+                    if (Payment == null)
+                    {
+                        result.Status = 1602;
+                        var msg = Globals.GetStatusCode().Where(x => x.Status == result.Status).SingleOrDefault();
+                        result.Message = msg != null ? msg.Message : "";
+                        return result;
+                    }
 
                     if (OrderAlacarte.POSHeader != null && OrderAlacarte.POSDetails != null && OrderAlacarte.POSDetails.Count() != 0)
                     {
@@ -92,15 +131,16 @@ namespace SpeedTOHAPI.Controllers
                                 //if(result.Status == 200)
                                 //{
                                     //Insert Alacarte
-                                    command.CommandText = @"INSERT INTO DBA.TransactionAlacartes (TransactionCode, OpenDate, UserOrder, PatientID)
-                                                                    VALUES (?,?,?,?)";
+                                    command.CommandText = @"INSERT INTO DBA.TransactionAlacartes (TransactionCode, OpenDate, UserOrder, PatientID, PaymentID)
+                                                                    VALUES (?,?,?,?,?)";
                                     command.Parameters.Clear();
                                     command.Parameters.AddWithValue("TransactionCode", Convert.ToInt32(pOSHeaders[0].TRANSACT));
                                     command.Parameters.AddWithValue("OpenDate", Convert.ToDateTime(pOSHeaders[0].OPENDATE));
                                     command.Parameters.AddWithValue("UserOrder", Convert.ToInt32(OrderAlacarte.Transaction.UserOrder));
                                     command.Parameters.AddWithValue("PatientID", Convert.ToInt32(OrderAlacarte.Transaction.PatientID));
+                                    command.Parameters.AddWithValue("PaymentID", Convert.ToInt32(OrderAlacarte.Transaction.PaymentID));
                                     command.ExecuteNonQuery();
-
+                                    
                                     //Insert Alacarte Detail
                                     foreach (var detail in OrderAlacarte.POSDetails)
                                     {

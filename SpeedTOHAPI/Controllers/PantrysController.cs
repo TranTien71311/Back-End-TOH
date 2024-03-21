@@ -268,7 +268,7 @@ namespace SpeedTOHAPI.Models
 
                         if (Pantry.IsActive != null)
                         {
-                            query += ", IsActive='" + Pantry.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(Pantry.IsActive) + "'";
                         }
                         query += " WHERE PantryCode='" + Pantry.PantryCode + "'";
 

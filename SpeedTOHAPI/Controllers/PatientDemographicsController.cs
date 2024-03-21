@@ -450,7 +450,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         if (patient.IsActive != null)
                         {
-                            query += ", IsActive='" + patient.IsActive + "'";
+                            query += ", IsActive=" + Convert.ToInt32(patient.IsActive) + "";
                         }
                         query += " WHERE VisitCode='"+ patient.VisitCode + "' AND HN='"+ patient.HN + "'";
 
@@ -500,6 +500,7 @@ namespace SpeedTOHAPI.Controllers
                                                string VisitCode = null,
                                                string HN = null,
                                                string BedCode = null,
+                                               string RoomID = null,
                                                string DoB = null,
                                                string FastingFrom = null,
                                                string FastingTo = null,
@@ -612,47 +613,70 @@ namespace SpeedTOHAPI.Controllers
                                     LEFT JOIN DBA.Wards W ON R.WardID = W.WardID
                                     WHERE PatientID <> 0";
 
+                string queryin = @"SELECT TOP " + _PageSize + @" START AT " + (_PageNum == 0 ? 1 : ((_PageNum * _PageSize) + 1)) + @" 
+                                    PA.PatientID
+                                    FROM DBA.Patients PA
+                                    LEFT JOIN DBA.Beds B ON PA.BedCode = B.BedCode
+                                    LEFT JOIN DBA.Rooms R ON B.RoomID = R.RoomID
+                                    LEFT JOIN DBA.Wards W ON R.WardID = W.WardID
+                                    WHERE PatientID <> 0";
+
                 if (PantientID != null)
                 {
                     query += " AND PantientID = " + Convert.ToInt32(PantientID) + "";
+                    queryin += " AND PantientID = " + Convert.ToInt32(PantientID) + "";
                 }
                 if (VisitCode != null)
                 {
                     query += " AND VisitCode = '" + VisitCode + "'";
+                    queryin += " AND VisitCode = '" + VisitCode + "'";
                 }
                 if (HN != null)
                 {
                     query += " AND HN = '" + HN + "'";
+                    queryin += " AND HN = '" + HN + "'";
+                }
+                if (RoomID != null)
+                {
+                    query += " AND R.RoomID = '" + RoomID + "'";
+                    queryin += " AND R.RoomID = '" + RoomID + "'";
                 }
                 if (BedCode != null)
                 {
                     query += " AND PA.BedCode = '" + BedCode + "'";
+                    queryin += " AND PA.BedCode = '" + BedCode + "'";
                 }
                 if (DoB != null)
                 {
                     query += " AND PA.DoB = '" + DoB + "'";
+                    queryin += " AND PA.DoB = '" + DoB + "'";
                 }
                 if (FastingFrom != null)
                 {
                     DateTime Date = DateTime.Parse(FastingFrom);
                     query += " AND PA.FastingFrom >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.FastingFrom >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (FastingTo != null)
                 {
                     DateTime Date = DateTime.Parse(FastingTo);
                     query += " AND PA.FastingTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.FastingTo <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (LengthOfStay != null)
                 {
                     query += " AND PA.LengthOfStay = " + LengthOfStay + "";
+                    queryin += " AND PA.LengthOfStay = " + LengthOfStay + "";
                 }
                 if (PreviousBed != null)
                 {
                     query += " AND PA.PreviousBed = '" + PreviousBed + "'";
+                    queryin += " AND PA.PreviousBed = '" + PreviousBed + "'";
                 }
                 if (MovedToBed != null)
                 {
                     query += " AND PA.MovedToBed = '" + MovedToBed + "'";
+                    queryin += " AND PA.MovedToBed = '" + MovedToBed + "'";
                 }
                 if (DoNotOrderFrom != null)
                 {
@@ -668,35 +692,42 @@ namespace SpeedTOHAPI.Controllers
                 {
                     DateTime Date = DateTime.Parse(AdmitDate);
                     query += " AND PA.AdmitDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.AdmitDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (DischargeDate != null)
                 {
                     DateTime Date = DateTime.Parse(DischargeDate);
                     query += " AND PA.DischargeDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.DischargeDate = '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (IsActive != null)
                 {
                     query += " AND PA.IsActive = " + (IsActive == true ? 1 : 0) + "";
+                    queryin += " AND PA.IsActive = " + (IsActive == true ? 1 : 0) + "";
                 }
                 if (CreatedFrom != null)
                 {
                     DateTime Date = DateTime.Parse(CreatedFrom);
                     query += " AND PA.CreatedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.CreatedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (CreatedTo != null)
                 {
                     DateTime Date = DateTime.Parse(CreatedTo);
                     query += " AND PA.CreatedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.CreatedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 if (ModifiedFrom != null)
                 {
                     DateTime Date = DateTime.Parse(ModifiedFrom);
                     query += " AND PA.ModifiedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.ModifiedDate >= '" + Date.ToString("yyyy/MM/dd 00:00:00", CultureInfo.InvariantCulture) + "'";
                 }
                 if (ModifiedTo != null)
                 {
                     DateTime Date = DateTime.Parse(ModifiedTo);
                     query += " AND PA.ModifiedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
+                    queryin += " AND PA.ModifiedDate <= '" + Date.ToString("yyyy/MM/dd 23:59:59", CultureInfo.InvariantCulture) + "'";
                 }
                 string _OrderBy = "ASC";
                 if (OrderBy == "DESC")
@@ -708,10 +739,47 @@ namespace SpeedTOHAPI.Controllers
                 command.CommandText = query;
                 DataTable Data = new DataTable("Patients");
                 Data.Load(command.ExecuteReader());
+                List<PatientModel> Patients = JsonConvert.DeserializeObject<List<PatientModel>>(JsonConvert.SerializeObject(Data));
+
+                string queryTransaction = "SELECT * FROM DBA.TransactionAlacartes WHERE PatientID IN (" + queryin + ")";
+                command.CommandText = queryTransaction;
+                DataTable DataTransactions = new DataTable("Transactions");
+                DataTransactions.Load(command.ExecuteReader());
+                List<TransactionAlacarteModel> Transactions = JsonConvert.DeserializeObject<List<TransactionAlacarteModel>>(JsonConvert.SerializeObject(DataTransactions));
+
+                var joinData = (from data in Patients
+                                select new
+                                {
+                                    PatientID = data.PatientID,
+                                    VisitCode = data.VisitCode,
+                                    HN = data.HN,
+                                    BedCode = data.BedCode,
+                                    BedName = data.BedName,
+                                    RoomID = data.RoomID,
+                                    RoomNameEn = data.RoomNameEn,
+                                    WardNameEn = data.WardNameEn,
+                                    PatientFullName = data.PatientFullName,
+                                    DoB = data.DoB,
+                                    Nationality = data.Nationality,
+                                    PrimaryDoctor = data.PrimaryDoctor,
+                                    FastingFrom = data.FastingFrom,
+                                    FastingTo = data.FastingTo,
+                                    LengthOfStay = data.LengthOfStay,
+                                    PreviousBed = data.PreviousBed,
+                                    MovedToBed = data.MovedToBed,
+                                    DoNotOrderFrom = data.DoNotOrderFrom,
+                                    DoNotOrderTo = data.DoNotOrderTo,
+                                    AdmitDate = data.AdmitDate,
+                                    DischargeDate = data.DischargeDate,
+                                    IsActive = data.IsActive,
+                                    CreatedDate = data.CreatedDate,
+                                    ModifiedDate = data.ModifiedDate,
+                                    TransactionAlacarte = Transactions.Where(x=>x.PatientID == data.PatientID).ToList(),
+                                }).ToList();
 
                 result.Status = 200;
                 result.Message = "OK";
-                result.Data = Data;
+                result.Data = joinData;
             }
             catch (Exception ex)
             {

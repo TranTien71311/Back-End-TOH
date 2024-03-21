@@ -224,8 +224,8 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 206, Function = "Any", Message = "PartnerKey not found", Description = "Không tìm thấy mã đối tác (Kiểm tra PartnerKey ở Header)" });
             rs.Add(new MessageModel { Status = 207, Function = "Any", Message = "PartnerKey does not exist", Description = "Mã đối tác không tồn tại (Kiểm tra PartnerKey ở Header)" });
             rs.Add(new MessageModel { Status = 208, Function = "Any", Message = "The maximum number of elements is " + maxLength + " items", Description = "Số lượng phần tử tối đa là "+ maxLength +" phần tử" });
+            rs.Add(new MessageModel { Status = 209, Function = "Any", Message = "Cloud Store does not exist", Description = "Cloud Store does not exist" });
             rs.Add(new MessageModel { Status = 0, Function = "Any", Message = "Exception erorr", Description = "Lỗi ngoại lệ" });
-
             //Patient
             rs.Add(new MessageModel { Status = 301, Function = "Patient", Message = "Data list patient can not be empty", Description = "Danh sách bệnh nhân không được để trống" });
             rs.Add(new MessageModel { Status = 302, Function = "Patient", Message = "VisitCode can not be empty", Description = "VisitCode không được để trống" });
@@ -367,14 +367,38 @@ namespace SpeedTOHAPI.Codes
             rs.Add(new MessageModel { Status = 1405, Function = "Login", Message = "EmployeeCode does not exists!", Description = "EmployeeCode không tồn tại!" });
             rs.Add(new MessageModel { Status = 1406, Function = "Login", Message = "EmployeeCode cannot be empty!", Description = "EmployeeCode không được để trống!" });
             rs.Add(new MessageModel { Status = 1407, Function = "Login", Message = "Login information is incorrect!", Description = "Thông tin Login không chính xác!" });
+            rs.Add(new MessageModel { Status = 1408, Function = "Login", Message = "Token has expired!", Description = "Phiên đã hết hạn!" });
+            rs.Add(new MessageModel { Status = 1409, Function = "Login", Message = "Token has invalid signature!", Description = "Phiên không chính xác!" });
             //Tranlations 
             rs.Add(new MessageModel { Status = 1501, Function = "Translation", Message = "Tranlation Name cannot be empty!", Description = "Tranlations Name không được để trống!" });
             rs.Add(new MessageModel { Status = 1502, Function = "Translation", Message = "Tranlation Name already exists!", Description = "Tranlation Name đã tồn tại!" });
             rs.Add(new MessageModel { Status = 1503, Function = "Translation", Message = "TransactionID cannot be empty!", Description = "TransactionID không được để trống" });
             rs.Add(new MessageModel { Status = 1504, Function = "Translation", Message = "TransactionID does not exists!", Description = "TransactionID không tồn tại" });
-            rs.Add(new MessageModel { Status = 1405, Function = "Login", Message = "EmployeeCode does not exists!", Description = "EmployeeCode không tồn tại!" });
-            rs.Add(new MessageModel { Status = 1406, Function = "Login", Message = "EmployeeCode cannot be empty!", Description = "EmployeeCode không được để trống!" });
-            rs.Add(new MessageModel { Status = 1407, Function = "Login", Message = "Login information is incorrect!", Description = "Thông tin Login không chính xác!" });
+            //OrderAlacartes 
+            rs.Add(new MessageModel { Status = 1601, Function = "OrderAlacarte", Message = "Data Config empty!", Description = "Dữ liệu Config trống!" });
+            rs.Add(new MessageModel { Status = 1602, Function = "OrderAlacarte", Message = "Payment can not be empty!", Description = "Hình thức thanh toán không được để trống!" });
+            //Payments 
+            rs.Add(new MessageModel { Status = 1701, Function = "Payments", Message = "Payment list cannot be empty!", Description = "Danh sách hình thức thanh toán không được để trống!" });
+            rs.Add(new MessageModel { Status = 1702, Function = "Payments", Message = "Payment name cannot be empty!", Description = "Payment Name không được để trống!" });
+            rs.Add(new MessageModel { Status = 1703, Function = "Payments", Message = "PaymentID does cannot be empty!", Description = "PaymentID không được để trống!" });
+            rs.Add(new MessageModel { Status = 1704, Function = "Payments", Message = "PaymentID does not exists!", Description = "PaymentID không tồn tại!" });
+            //Categories
+            rs.Add(new MessageModel { Status = 1801, Function = "Categories", Message = "Data list Categories empty!", Description = "Danh sách Categories trống" });
+            rs.Add(new MessageModel { Status = 1802, Function = "Categories", Message = "Category Name empty!", Description = "Category Name trống" });
+            rs.Add(new MessageModel { Status = 1803, Function = "Categories", Message = "CategoryID does not exists!", Description = "CategoryID không tồn tại" });
+            //Sub Categories
+            rs.Add(new MessageModel { Status = 1901, Function = "SubCategories", Message = "Data list Sub Categories empty!", Description = "Danh sách Sub Categories trống" });
+            rs.Add(new MessageModel { Status = 1902, Function = "SubCategories", Message = "SubCategory Name empty!", Description = "SubCategory Name trống" });
+            rs.Add(new MessageModel { Status = 1903, Function = "SubCategories", Message = "SubCategoryID does not exists!", Description = "SubCategoryID không tồn tại" });
+            rs.Add(new MessageModel { Status = 1904, Function = "SubCategories", Message = "CategoryCode empty!", Description = "CategoryCode trống" });
+            rs.Add(new MessageModel { Status = 1905, Function = "SubCategories", Message = "CategoryCode does not exists!", Description = "CategoryCode không tồn tại" });
+            //Products
+            rs.Add(new MessageModel { Status = 2001, Function = "Products", Message = "Data list Products empty!", Description = "Danh sách Sub Categories trống" });
+            rs.Add(new MessageModel { Status = 2002, Function = "Products", Message = "Product Name empty!", Description = "SubCategory Name trống" });
+            rs.Add(new MessageModel { Status = 2003, Function = "Products", Message = "SubCategoryCode can not be empty!", Description = "SubCategoryCode không được để trống" });
+            rs.Add(new MessageModel { Status = 2004, Function = "Products", Message = "SubCategoryCode does not exists!", Description = "SubCategoryCode không tồn tại" });
+            rs.Add(new MessageModel { Status = 2005, Function = "Products", Message = "ProductCode does not exists!", Description = "CategoryCode không tồn tại" });
+            rs.Add(new MessageModel { Status = 2006, Function = "Products", Message = "Price can not be empty!", Description = "Giá không được để trống" });
             return rs;
         }
     }

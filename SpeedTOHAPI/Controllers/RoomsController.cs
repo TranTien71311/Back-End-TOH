@@ -330,7 +330,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         if (room.IsActive != null)
                         {
-                            query += ", IsActive='" + room.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(room.IsActive) + "'";
                         }
                         query += " WHERE RoomID='" + room.RoomID + "'";
 

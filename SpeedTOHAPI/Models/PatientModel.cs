@@ -29,5 +29,10 @@ namespace SpeedTOHAPI.Models
         public DietaryPropertieModel DietaryPropertieModels { get; set; }
         public DateTime? DischargeDate { get; set; }
         public DateTime? AdmitDate { get; set; }
+        public string BedName { get; set; }
+        public string RoomID { get; set; }
+        public string RoomNameEn { get; set; }
+        public string WardNameEn { get; set; }
+        public List<TransactionAlacarteModel> TransactionAlacarte { get; set; }
     }
 }

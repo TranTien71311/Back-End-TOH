@@ -319,7 +319,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         if (bed.IsActive != null)
                         {
-                            query += ", IsActive='" + bed.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(bed.IsActive) + "'";
                         }
                         query += " WHERE BedID='" + bed.BedID + "'";
 

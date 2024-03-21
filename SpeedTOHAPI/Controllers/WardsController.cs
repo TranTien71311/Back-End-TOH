@@ -297,7 +297,7 @@ namespace SpeedTOHAPI.Controllers
                         }
                         if (ward.IsActive != null)
                         {
-                            query += ", IsActive='" + ward.IsActive + "'";
+                            query += ", IsActive='" + Convert.ToInt32(ward.IsActive) + "'";
                         }
                         query += " WHERE WardID='" + ward.WardID + "'";
 
