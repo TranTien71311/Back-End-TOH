@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JWT, Version=7.0.0.0, Culture=neutral, PublicKeyToken=6f98bca0f40f2ecf, processorArchitecture=MSIL">
+      <HintPath>..\packages\JWT.7.3.1\lib\net40\JWT.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -172,12 +175,14 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Codes\APIResult.cs" />
     <Compile Include="Codes\EmptyTask.cs" />
+    <Compile Include="Codes\GetCloud.cs" />
     <Compile Include="Codes\Globals.cs" />
     <Compile Include="Codes\NakedBodyAttribute.cs" />
     <Compile Include="Codes\NakedBodyParameterBinding.cs" />
     <Compile Include="Codes\SessionHelper.cs" />
     <Compile Include="Codes\UserSession.cs" />
     <Compile Include="Controllers\BedsController.cs" />
+    <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\DietaryPropertiesController.cs" />
     <Compile Include="Controllers\FoodsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -185,15 +190,19 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\OrderAlacarteController.cs" />
     <Compile Include="Controllers\PatientDemographicsController.cs" />
+    <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\POSForcedChoicesController.cs" />
     <Compile Include="Controllers\POSProductCombosController.cs" />
     <Compile Include="Controllers\POSProductsController.cs" />
     <Compile Include="Controllers\POSQuestionsController.cs" />
     <Compile Include="Controllers\POSReportCatsController.cs" />
     <Compile Include="Controllers\POSSaleTypesController.cs" />
+    <Compile Include="Controllers\POSSettingsController.cs" />
     <Compile Include="Controllers\POSSysInfoController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\RoomsController.cs" />
     <Compile Include="Controllers\SnacksController.cs" />
+    <Compile Include="Controllers\SubCategoriesController.cs" />
     <Compile Include="Controllers\SyncDataController.cs" />
     <Compile Include="Controllers\SyncPOSReportCatsController.cs" />
     <Compile Include="Controllers\SyncPOSForcedChoicesController.cs" />
@@ -211,7 +220,13 @@
     </Compile>
     <Compile Include="Models\APISettingModel.cs" />
     <Compile Include="Models\BedModel.cs" />
+    <Compile Include="Models\CategoryModel.cs" />
+    <Compile Include="Models\CloudPOSCategoryModel.cs" />
+    <Compile Include="Models\CloudProductModel.cs" />
+    <Compile Include="Models\CloudStoreModel.cs" />
+    <Compile Include="Models\CloudSubCategoryModel.cs" />
     <Compile Include="Models\DietaryPropertieModel.cs" />
+    <Compile Include="Models\DietMenuModel.cs" />
     <Compile Include="Models\DietModel.cs" />
     <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\FoodAllergieModel.cs" />
@@ -226,6 +241,8 @@
     <Compile Include="Models\PantryModel.cs" />
     <Compile Include="Controllers\PantrysController.cs" />
     <Compile Include="Models\PatientModel.cs" />
+    <Compile Include="Models\PaymentModel.cs" />
+    <Compile Include="Models\POSConfigModel.cs" />
     <Compile Include="Models\POSDetailModel.cs" />
     <Compile Include="Models\POSForcedChoiceModel.cs" />
     <Compile Include="Models\POSHeaderModel.cs" />
@@ -235,17 +252,23 @@
     <Compile Include="Models\POSReportCatModel.cs" />
     <Compile Include="Models\POSSaleTypeModel.cs" />
     <Compile Include="Models\POSSysInfoModel.cs" />
+    <Compile Include="Models\ProductAllergyModel.cs" />
+    <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\RoomModel.cs" />
     <Compile Include="Models\SnackModel.cs" />
+    <Compile Include="Models\SubCategoryModel.cs" />
     <Compile Include="Models\SyncDataModel.cs" />
     <Compile Include="Models\TransactionAlacarteModel.cs" />
     <Compile Include="Models\TransactionDetailAlacarteModel.cs" />
+    <Compile Include="Models\TranslationCategoryModel.cs" />
     <Compile Include="Models\TranslationModel.cs" />
     <Compile Include="Models\TranslationPOSForceChoiceModel.cs" />
     <Compile Include="Models\TranslationPOSProductComboModel.cs" />
     <Compile Include="Models\TranslationPOSProductModel.cs" />
     <Compile Include="Models\TranslationPOSReportCatModel.cs" />
+    <Compile Include="Models\TranslationProductModel.cs" />
     <Compile Include="Models\TranslationQuestionModel.cs" />
+    <Compile Include="Models\TranslationSubCategoryModel.cs" />
     <Compile Include="Models\UpdateDatabaseModel.cs" />
     <Compile Include="Models\UserGroupModal.cs" />
     <Compile Include="Models\UserModal.cs" />
